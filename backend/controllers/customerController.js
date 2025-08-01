@@ -7,7 +7,7 @@ const Customer = require('../models/Customer');
 
 // Register a customer
 const registerCustomer = async (req, res) => {
-  const { name, username, password, email, address, phoneNumber } = req.body;
+  const { name, username, password, email, address, phone } = req.body;
 
   try {
     // Check if username or email already exists
@@ -26,7 +26,7 @@ const registerCustomer = async (req, res) => {
       password: hashedPassword, // hashed password saved
       email,
       address,
-      phoneNumber
+      phone
     });
 
     await customer.save();

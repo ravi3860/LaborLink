@@ -6,6 +6,9 @@ const {
   registerLabor 
 } = require('../controllers/laborController');
 
+const { loginUser 
+} = require('../controllers/loginController');
+
 const router = express.Router();
 
 // Route for registering a customer    
@@ -13,5 +16,9 @@ router.post('/register/customer', registerCustomer);
 
 // Route for registering a labor
 router.post('/register/labor', registerLabor);
+
+// POST /api/login
+router.post('/login', loginUser);
+
 
 module.exports = router;
