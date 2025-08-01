@@ -1,9 +1,11 @@
+// src/components/RegistrationForm.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { registerCustomer, registerLabor } from '../services/api';
+import './RegistrationForm.css';
 
 const RegistrationForm = () => {
-  const [role, setRole] = useState('Customer'); // default role
   const [formData, setFormData] = useState({
+    role: 'customer',
     name: '',
     username: '',
     password: '',
@@ -13,70 +15,35 @@ const RegistrationForm = () => {
     ageCategory: '',
     skillCategory: '',
   });
-  const [message, setMessage] = useState('');
-
-  const skillOptions = [
-    'Masons', 'Electricians', 'Plumbers', 'Painters', 'Carpenters',
-    'Tile Layers', 'Welders', 'Roofers', 'Helpers/General Labourers', 'Scaffolders'
-  ];
-
-  const ageOptions = [
-    'Young Adults', // 18–25 years
-    'Adults',       // 26–35 years
-    'Middle-aged Workers', // 36–50 years
-    'Senior Workers' // 51 years and above
-  ];
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
-  };
-
-  const handleRoleChange = (e) => {
-    setRole(e.target.value);
-    setFormData({
-      name: '',
-      username: '',
-      password: '',
-      email: '',
-      address: '',
-      phone: '',
-      ageCategory: '',
-      skillCategory: '',
-    });
-    setMessage('');
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      let url = '';
+      let res;
+      const dataToSend = { ...formData };
 
-      if (role === 'Customer') {
-        url = '/api/customer/register';
-      } else if (role === 'Labor') {
-        url = '/api/labor/register';
+      if (formData.role === 'customer') {
+        delete dataToSend.ageCategory;
+        delete dataToSend.skillCategory;
+        res = await registerCustomer(dataToSend);
+      } else if (formData.role === 'labor') {
+        res = await registerLabor(dataToSend);
+      } else {
+        alert('Admin cannot register here');
+        return;
       }
 
-      const dataToSend = {
-        name: formData.name,
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        address: formData.address,
-        phone: formData.phone,
-      };
+      alert(res.data.message || 'Registered Successfully!');
 
-      // Append labor-only fields if labor
-      if (role === 'Labor') {
-        dataToSend.ageCategory = formData.ageCategory;
-        dataToSend.skillCategory = formData.skillCategory;
-      }
-
-      const response = await axios.post(url, dataToSend);
-
-      setMessage(response.data.message);
+      // ✅ Reset the form fields
       setFormData({
+        role: 'customer',
         name: '',
         username: '',
         password: '',
@@ -86,123 +53,152 @@ const RegistrationForm = () => {
         ageCategory: '',
         skillCategory: '',
       });
+
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Registration failed');
+      console.error(error);
+      alert(error.response?.data?.error || error.message || 'Registration failed.');
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2>Register</h2>
+    <form onSubmit={handleSubmit} className="registration-form">
+      <h2 className="form-title">Register in Laborlink</h2>
 
-      <label>
-        Select Role:
-        <select value={role} onChange={handleRoleChange}>
-          <option value="Customer">Customer</option>
-          <option value="Labor">Labor</option>
+      <div className="form-group">
+        <label htmlFor="role" className="form-label">Role:</label>
+        <select
+          id="role"
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          className="form-select"
+        >
+          <option value="customer">Customer</option>
+          <option value="labor">Labor</option>
+          <option value="admin" disabled>Admin (Login Only)</option>
         </select>
-      </label>
+      </div>
 
-      <form onSubmit={handleSubmit}>
+      <div className="form-group">
         <input
           type="text"
           name="name"
           placeholder="Name"
-          value={formData.name}
           onChange={handleChange}
+          value={formData.name}
           required
+          className="form-input"
         />
+      </div>
 
+      <div className="form-group">
         <input
           type="text"
           name="username"
           placeholder="Username"
-          value={formData.username}
           onChange={handleChange}
+          value={formData.username}
           required
+          className="form-input"
         />
+      </div>
 
+      <div className="form-group">
         <input
           type="password"
           name="password"
           placeholder="Password"
-          value={formData.password}
           onChange={handleChange}
+          value={formData.password}
           required
+          className="form-input"
         />
+      </div>
 
+      <div className="form-group">
         <input
           type="email"
           name="email"
           placeholder="Email"
-          value={formData.email}
           onChange={handleChange}
+          value={formData.email}
           required
+          className="form-input"
         />
+      </div>
 
+      <div className="form-group">
         <input
           type="text"
           name="address"
           placeholder="Address"
-          value={formData.address}
           onChange={handleChange}
+          value={formData.address}
           required
+          className="form-input"
         />
+      </div>
 
+      <div className="form-group">
         <input
-          type="text"
+          type="tel"
           name="phone"
           placeholder="Phone Number"
-          value={formData.phone}
           onChange={handleChange}
+          value={formData.phone}
           required
+          className="form-input"
         />
+      </div>
 
-        {role === 'Labor' && (
-          <>
-            <label>
-              Age Category:
-              <select
-                name="ageCategory"
-                value={formData.ageCategory}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Age Category</option>
-                {ageOptions.map((age) => (
-                  <option key={age} value={age}>
-                    {age}
-                  </option>
-                ))}
-              </select>
-            </label>
+      {formData.role === 'labor' && (
+        <>
+          <div className="form-group">
+            <label htmlFor="ageCategory" className="form-label">Age Category:</label>
+            <select
+              id="ageCategory"
+              name="ageCategory"
+              value={formData.ageCategory}
+              onChange={handleChange}
+              required
+              className="form-select"
+            >
+              <option value="">Select Age Category</option>
+              <option value="Young Adults">Young Adults (18–25)</option>
+              <option value="Adults">Adults (26–35)</option>
+              <option value="Middle-aged Workers">Middle-aged Workers (36–50)</option>
+              <option value="Senior Workers">Senior Workers (51+)</option>
+            </select>
+          </div>
 
-            <label>
-              Skill Category:
-              <select
-                name="skillCategory"
-                value={formData.skillCategory}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Skill Category</option>
-                {skillOptions.map((skill) => (
-                  <option key={skill} value={skill}>
-                    {skill}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </>
-        )}
+          <div className="form-group">
+            <label htmlFor="skillCategory" className="form-label">Skill Category:</label>
+            <select
+              id="skillCategory"
+              name="skillCategory"
+              value={formData.skillCategory}
+              onChange={handleChange}
+              required
+              className="form-select"
+            >
+              <option value="">--Select Skill--</option>
+              <option value="Masons">Masons</option>
+              <option value="Electricians">Electricians</option>
+              <option value="Plumbers">Plumbers</option>
+              <option value="Painters">Painters</option>
+              <option value="Carpenters">Carpenters</option>
+              <option value="Tile Layers">Tile Layers</option>
+              <option value="Welders">Welders</option>
+              <option value="Roofers">Roofers</option>
+              <option value="Helpers/General Labourers">Helpers/General Labourers</option>
+              <option value="Scaffolders">Scaffolders</option>
+            </select>
+          </div>
+        </>
+      )}
 
-        <button type="submit" style={{ marginTop: '10px' }}>
-          Register
-        </button>
-      </form>
-
-      {message && <p>{message}</p>}
-    </div>
+      <button type="submit" className="submit-btn">Register</button>
+    </form>
   );
 };
 
