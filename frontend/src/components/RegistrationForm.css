@@ -1,6 +1,6 @@
 body {
-  background-color: #ffffff; /* clean white background */
-  background-image: 
+  background-color: #ffffff;
+  background-image:
     radial-gradient(circle at top left, #e6e0ff33, transparent 70%),
     radial-gradient(circle at bottom right, #c9c1ff33, transparent 70%);
   min-height: 100vh;
@@ -15,11 +15,11 @@ body {
   max-width: 460px;
   margin: 50px auto;
   padding: 35px 30px;
-  background: #f5f0ff; /* very light purple */
+  background: #f5f2fa; /* very light lavender */
   border-radius: 15px;
-  box-shadow: 0 8px 24px rgba(131, 107, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(160, 102, 210, 0.2); /* soft purple shadow */
   font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #4b3c8a; /* deep purple */
+  color: #4b3c8a;
 }
 
 .form-title {
@@ -28,8 +28,8 @@ body {
   font-weight: 800;
   font-size: 2rem;
   letter-spacing: 1.3px;
-  color: #6b52ff;
-  text-shadow: 0 2px 6px #d1c4ff88;
+  color: #a066d2;
+  text-shadow: 0 2px 6px #d8c8ff;
 }
 
 .form-group {
@@ -42,14 +42,14 @@ body {
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 1.1rem;
-  color: #6b52ff;
+  color: #9259dc;
 }
 
 .form-input,
 .form-select {
   padding: 12px 18px;
   font-size: 1rem;
-  border: 2px solid #bfb1ff;
+  border: 2px solid #cdbff1;
   border-radius: 12px;
   background-color: #fff;
   transition: all 0.35s ease;
@@ -57,35 +57,54 @@ body {
 }
 
 .form-input::placeholder {
-  color: #a899d7;
+  color: #b4a4de;
   font-style: italic;
 }
 
 .form-input:focus,
 .form-select:focus {
   outline: none;
-  border-color: #6b52ff;
-  box-shadow: 0 0 8px 2px #a998ffbb;
+  border-color: #a066d2;
+  box-shadow: 0 0 8px 2px #d0b5f8bb;
   background-color: #faf7ff;
 }
 
 .submit-btn {
   width: 100%;
   padding: 14px 0;
-  background: linear-gradient(135deg, #7b62ff, #5a42e8);
+  background: linear-gradient(135deg, #a066d2, #9259dc);
   border: none;
   border-radius: 15px;
   font-size: 1.25rem;
   font-weight: 800;
   color: white;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(101, 80, 255, 0.6);
+  box-shadow: 0 6px 18px rgba(160, 102, 210, 0.4);
   transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 .submit-btn:hover {
-  background: linear-gradient(135deg, #5a42e8, #7b62ff);
-  box-shadow: 0 8px 22px rgba(101, 80, 255, 0.85);
+  background: linear-gradient(135deg, #9259dc, #a066d2);
+  box-shadow: 0 8px 22px rgba(160, 102, 210, 0.6);
+}
+
+.switch-link {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  color: #555;
+}
+
+.switch-link a {
+  color: #a066d2;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.switch-link a:hover {
+  color: #7d49ba;
+  text-decoration: underline;
 }
 
 /* Responsive tweak */

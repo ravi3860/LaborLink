@@ -1,7 +1,9 @@
 // src/components/RegistrationForm.jsx
 import React, { useState } from 'react';
 import { registerCustomer, registerLabor } from '../services/api';
+import { Link } from 'react-router-dom';
 import './RegistrationForm.css';
+
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -198,6 +200,10 @@ const RegistrationForm = () => {
       )}
 
       <button type="submit" className="submit-btn">Register</button>
+
+        <p className="switch-link">
+            Already have an account? <Link to="/login">Log in</Link>
+        </p>
     </form>
   );
 };

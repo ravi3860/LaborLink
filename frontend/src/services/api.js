@@ -1,16 +1,16 @@
 import axios from 'axios';
 
-// Create axios instance with base URL for easier requests
-const api = axios.create({
-  baseURL: 'http://localhost:2000/api/laborlink',
-});
+// ✅ Add this line at the top
+const BASE_URL = 'http://localhost:2000/api/laborlink';
 
-// Register customer API call
-export const registerCustomer = (customerData) => {
-  return api.post('/register/customer', customerData);
+export const registerCustomer = async (customerData) => {
+  return await axios.post(`${BASE_URL}/register/customer`, customerData);
 };
 
-// Register labor API call
-export const registerLabor = (laborData) => {
-  return api.post('/register/labor', laborData);
+export const registerLabor = async (laborData) => {
+  return await axios.post(`${BASE_URL}/register/labor`, laborData);
+};
+
+export const loginUser = async (credentials) => {
+  return await axios.post(`${BASE_URL}/login`, credentials);
 };
