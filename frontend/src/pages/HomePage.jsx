@@ -1,9 +1,42 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Homepage.css";
-import { FiUser } from "react-icons/fi"; 
+import { FiUser } from "react-icons/fi";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  const handleUserIconClick = () => {
+    if (!token) {
+      navigate("/login");
+    } else if (role === "Customer") {
+      navigate("/customer/dashboard");
+    } else if (role === "Labor") {
+      navigate("/labor/dashboard");
+    } else if (role === "Admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleGetStartedClick = () => {
+    if (!token) {
+      navigate("/register");
+    } else if (role === "Customer") {
+      navigate("/customer/dashboard");
+    } else if (role === "Labor") {
+      navigate("/labor/dashboard");
+    } else if (role === "Admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/register");
+    }
+  };
+
   return (
     <div className="homepage">
       {/* Header */}
@@ -15,28 +48,18 @@ const HomePage = () => {
           </div>
 
           <nav className="nav-menu">
-            <Link to="/" className="nav-link">
-              Home
-            </Link>
-            <Link to="/about" className="nav-link">
-              About Us
-            </Link>
-            <Link to="/find-worker" className="nav-link">
-              Find a Worker
-            </Link>
-            <Link to="/subscriptions" className="nav-link">
-              Subscriptions
-            </Link>
-            <Link to="/contact" className="nav-link">
-              Contact Us
-            </Link>
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/about" className="nav-link">About Us</Link>
+            <Link to="/find-worker" className="nav-link">Find a Worker</Link>
+            <Link to="/subscriptions" className="nav-link">Subscriptions</Link>
+            <Link to="/contact" className="nav-link">Contact Us</Link>
           </nav>
 
-        <Link to="/login" className="user-icon-link">
-        <div className="user-icon">
-            <FiUser size={24} color="#6b52ff" />
-        </div>
-        </Link>
+          <div className="user-icon-link" onClick={handleUserIconClick}>
+            <div className="user-icon">
+              <FiUser size={24} color="#6b52ff" />
+            </div>
+          </div>
         </div>
       </header>
 
@@ -51,9 +74,9 @@ const HomePage = () => {
             Easily schedule shifts, track labor availability, and monitor project
             progress — all from one platform.
           </p>
-          <Link to="/register" className="hero-button">
+          <button className="hero-button" onClick={handleGetStartedClick}>
             Get Started
-          </Link>
+          </button>
         </div>
       </section>
 
@@ -61,22 +84,17 @@ const HomePage = () => {
       <section className="top-workers-section">
         <div className="top-workers-container">
           <h2 className="section-title">Top Rated Workers</h2>
-
           <div className="workers-grid">
-            {/* Worker 1 */}
             <div className="worker-card">
               <div className="avatar">SE</div>
               <h3 className="worker-name">Skilled Electrician</h3>
               <p className="worker-location">Colombo</p>
               <p className="worker-rate">LKR 3,500/day</p>
-              <p className="worker-description">
-                Reliable and experienced in large-scale projects.
-              </p>
+              <p className="worker-description">Reliable and experienced in large-scale projects.</p>
               <div className="worker-rating">★★★★★</div>
               <button className="worker-btn">View Profile</button>
             </div>
 
-            {/* Worker 2 */}
             <div className="worker-card">
               <div className="avatar">MS</div>
               <h3 className="worker-name">Mason Specialist</h3>
@@ -87,7 +105,6 @@ const HomePage = () => {
               <button className="worker-btn">View Profile</button>
             </div>
 
-            {/* Worker 3 */}
             <div className="worker-card">
               <div className="avatar">SP</div>
               <h3 className="worker-name">Skilled Plumber</h3>
@@ -109,9 +126,7 @@ const HomePage = () => {
             <div className="feature-card">
               <div className="feature-icon">🔍</div>
               <h3 className="feature-title">Smart Labor Search</h3>
-              <p className="feature-desc">
-                Find skilled workers based on trade, location & availability.
-              </p>
+              <p className="feature-desc">Find skilled workers based on trade, location & availability.</p>
             </div>
 
             <div className="feature-card">
@@ -129,9 +144,7 @@ const HomePage = () => {
             <div className="feature-card">
               <div className="feature-icon">🔔</div>
               <h3 className="feature-title">Shift Alerts</h3>
-              <p className="feature-desc">
-                Automated notifications for shift changes and assignments.
-              </p>
+              <p className="feature-desc">Automated notifications for shift changes and assignments.</p>
             </div>
 
             <div className="feature-card">
@@ -147,30 +160,23 @@ const HomePage = () => {
       <section className="reviews-section">
         <div className="reviews-container">
           <h2 className="section-title">Reviews</h2>
-
           <div className="reviews-grid">
             <div className="review-card">
               <div className="avatar-large">JW</div>
               <h3 className="review-name">James W.</h3>
-              <p className="review-text">
-                "Excellent system to coordinate multiple sites. Reduced delays by 30%!"
-              </p>
+              <p className="review-text">"Excellent system to coordinate multiple sites. Reduced delays by 30%!"</p>
             </div>
 
             <div className="review-card">
               <div className="avatar-large">DK</div>
               <h3 className="review-name">Daniel K.</h3>
-              <p className="review-text">
-                "The dashboard gives me full visibility on who's working where and when."
-              </p>
+              <p className="review-text">"The dashboard gives me full visibility on who's working where and when."</p>
             </div>
 
             <div className="review-card">
               <div className="avatar-large">AM</div>
               <h3 className="review-name">Arjun M.</h3>
-              <p className="review-text">
-                "Easy to find good projects and manage my work schedule."
-              </p>
+              <p className="review-text">"Easy to find good projects and manage my work schedule."</p>
             </div>
           </div>
         </div>
@@ -185,11 +191,8 @@ const HomePage = () => {
               <span className="logo-text">LMS</span>
             </div>
             <p className="footer-text">"Your Trusted Property Partner"</p>
-            <p className="footer-text">
-              Connecting buyers and sellers with ease and transparency.
-            </p>
+            <p className="footer-text">Connecting buyers and sellers with ease and transparency.</p>
             <div className="social-icons">
-              {/* Replace with actual icons or svg */}
               <span className="social-icon">📘</span>
               <span className="social-icon">📸</span>
               <span className="social-icon">🐦</span>

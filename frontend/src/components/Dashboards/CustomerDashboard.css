@@ -1,0 +1,107 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-sidebar {
+  width: 220px;
+  background-color: #2e3b4e;
+  color: #fff;
+  padding: 20px;
+}
+
+.dashboard-sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dashboard-sidebar ul li {
+  margin: 10px 0;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.dashboard-sidebar ul li:hover,
+.dashboard-sidebar ul li.active {
+  background-color: #445a78;
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f9f9f9;
+}
+
+.dashboard-section {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.profile-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+.profile-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Common Button Style */
+.button-group button {
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Update Button */
+.button-group button[type="submit"] {
+  background-color: #010001;
+  color: white;
+}
+
+.button-group button[type="submit"]:hover {
+  background-color: #4c294e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+}
+
+/* Delete Button */
+.button-group .delete-btn {
+  background-color: #000000;
+  color: white;
+}
+
+.button-group .delete-btn:hover {
+  background-color: #4c294e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(192, 57, 43, 0.2);
+}

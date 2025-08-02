@@ -1,9 +1,13 @@
 const express = require('express');
 const { 
-  registerCustomer 
+  registerCustomer,
+  updateCustomer,
+  deleteCustomer
 } = require('../controllers/customerController');
 const { 
   registerLabor,
+  updateLabor,
+  deleteLabor
 } = require('../controllers/laborController');
 
 const { loginUser 
@@ -17,8 +21,20 @@ const router = express.Router();
 // Route for registering a customer    
 router.post('/register/customer', registerCustomer);
 
+// Route for updating a customer
+router.put('/customers/update', updateCustomer);  
+
+// Route for deleting a customer
+router.delete('/customers/delete/:id', deleteCustomer);           
+
 // Route for registering a labor
 router.post('/register/labor', registerLabor);
+
+// Route for updating a labor
+router.put('/labors/update', updateLabor);
+
+// Route for deleting a labor
+router.delete('/labors/delete/:id', deleteLabor);
 
 // POST /api/login
 router.post('/login', loginUser);

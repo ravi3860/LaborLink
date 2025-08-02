@@ -82,7 +82,34 @@ const getLaborDashboardData = async (req, res) => {
   }
 };
 
+// PUT /api/labors/update
+const updateLabor = async (req, res) => {
+  try {
+    const { _id, name, email, username, address, phone, ageCategory, skillCategory } = req.body;
+    const updatedLabor = await Labor.findByIdAndUpdate(
+      _id,
+      { name, email, username, address, phone, ageCategory, skillCategory },
+      { new: true }
+    );
+    res.json({ success: true, updatedLabor });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to update details' });
+  }
+};
+
+// DELETE /api/labors/delete/:id
+const deleteLabor = async (req, res) => {
+  try {
+    await Labor.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to delete account' });
+  }
+};
+
 module.exports = {
   registerLabor,
-  getLaborDashboardData
+  getLaborDashboardData,
+  updateLabor,
+  deleteLabor
 };

@@ -56,5 +56,32 @@ const getDashboardData = async (req, res) => {
   }
 };
 
+// PUT /api/customers/update
+const updateCustomer = async (req, res) => {
+  try {
+    const { _id, name, email, username, address, phone } = req.body;
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      _id,
+      { name, email, username, address, phone },
+      { new: true }
+    );
+    res.json({ success: true, updatedCustomer });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to update details' });
+  }
+};
+
+// DELETE /api/customers/delete/:id
+const deleteCustomer = async (req, res) => {
+  try {
+    await Customer.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to delete account' });
+  }
+};
+
 module.exports = { registerCustomer, 
-                   getDashboardData };
+                   getDashboardData,
+                   updateCustomer,
+                   deleteCustomer };
