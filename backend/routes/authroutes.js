@@ -4,7 +4,6 @@ const {
 } = require('../controllers/customerController');
 const { 
   registerLabor,
-  getLaborDashboardData
 } = require('../controllers/laborController');
 
 const { loginUser 
@@ -28,6 +27,9 @@ router.post('/login', loginUser);
 router.get('/customer/dashboard', authMiddleware.verifyCustomer, require('../controllers/customerController').getDashboardData);
 
 // Protected route: Get labor dashboard data
-router.get('/labor/dashboard', authMiddleware.verifyLabor, getLaborDashboardData);
+router.get('/labor/dashboard', authMiddleware.verifyLabor, require('../controllers/laborController').getLaborDashboardData);
+
+// Protected route: Get admin dashboard data
+router.get('/admin/dashboard', authMiddleware.verifyAdmin, require('../controllers/adminController').getDashboardData);
 
 module.exports = router;
