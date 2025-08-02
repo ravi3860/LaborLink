@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Homepage.css";
-import { FiLogIn } from 'react-icons/fi';
+import { FiUser } from "react-icons/fi"; 
 
 const HomePage = () => {
   return (
@@ -32,9 +32,9 @@ const HomePage = () => {
             </Link>
           </nav>
 
-        <Link to="/register" className="user-icon-link">
+        <Link to="/login" className="user-icon-link">
         <div className="user-icon">
-            <FiLogIn size={24} color="#6b52ff" />
+            <FiUser size={24} color="#6b52ff" />
         </div>
         </Link>
         </div>
@@ -51,7 +51,7 @@ const HomePage = () => {
             Easily schedule shifts, track labor availability, and monitor project
             progress — all from one platform.
           </p>
-          <Link to="/find-worker" className="hero-button">
+          <Link to="/register" className="hero-button">
             Get Started
           </Link>
         </div>
