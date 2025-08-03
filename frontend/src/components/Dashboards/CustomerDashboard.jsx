@@ -54,79 +54,75 @@ const CustomerDashboard = () => {
     if (window.confirm('Are you sure you want to delete your account?')) {
       try {
         await deleteCustomer(customerData._id);
-        alert('Account deleted successfully');
+        Swal.fire('Account deleted successfully');
         handleLogout();
       } catch (err) {
         console.error('Delete failed:', err);
-        alert('Failed to delete account');
+        Swal.fire('Failed to delete account');
       }
     }
   };
 
-  if (!customerData) return <p>Loading dashboard...</p>;
+  if (!customerData) return <p className="loading-text">Loading dashboard...</p>;
 
   return (
     <div className="dashboard-container">
-      <aside className="dashboard-sidebar">
-        <h2>Customer Panel</h2>
-        <ul>
-          <li className={activeTab === 'profile' ? 'active' : ''} onClick={() => setActiveTab('profile')}>Profile</li>
-          <li className={activeTab === 'bookings' ? 'active' : ''} onClick={() => setActiveTab('bookings')}>Bookings</li>
-          <li className={activeTab === 'subscriptions' ? 'active' : ''} onClick={() => setActiveTab('subscriptions')}>Subscriptions</li>
-          <li onClick={handleLogout}>Logout</li>
+      <aside className="sidebar">
+        <h2 className="sidebar-title">Customer Panel</h2>
+        <ul className="sidebar-nav">
+          <li className={activeTab === 'profile' ? 'active' : ''} onClick={() => setActiveTab('profile')}>👤 Profile</li>
+          <li className={activeTab === 'bookings' ? 'active' : ''} onClick={() => setActiveTab('bookings')}>📆 Bookings</li>
+          <li className={activeTab === 'subscriptions' ? 'active' : ''} onClick={() => setActiveTab('subscriptions')}>💳 Subscriptions</li>
+          <li onClick={handleLogout}>🚪 Logout</li>
         </ul>
       </aside>
 
-      <main className="dashboard-content">
+      <main className="content">
         {activeTab === 'profile' && (
-          <div className="dashboard-section">
+          <div className="card">
             <h3>My Profile</h3>
-            <form className="profile-form" onSubmit={handleUpdate}>
-              <label>
-                Name:
+            <form className="form" onSubmit={handleUpdate}>
+              <label>Name:
                 <input type="text" name="name" value={formData.name || ''} onChange={handleChange} />
               </label>
-              <label>
-                Username:
+              <label>Username:
                 <input type="text" name="username" value={formData.username || ''} onChange={handleChange} />
               </label>
-              <label>
-                Email:
+              <label>Email:
                 <input type="email" name="email" value={formData.email || ''} onChange={handleChange} />
               </label>
-              <label>
-                Address:
+              <label>Address:
                 <input type="text" name="address" value={formData.address || ''} onChange={handleChange} />
               </label>
-              <label>
-                Phone:
+              <label>Phone:
                 <input type="text" name="phone" value={formData.phone || ''} onChange={handleChange} />
               </label>
 
               <div className="button-group">
-                <button type="submit">Update Details</button>
-                <button type="button" className="delete-btn" onClick={handleDelete}>Delete Account</button>
+                <button type="submit" className="btn purple">Update</button>
+                <button type="button" className="btn danger" onClick={handleDelete}>Delete Account</button>
               </div>
             </form>
           </div>
         )}
 
         {activeTab === 'bookings' && (
-          <div className="dashboard-section">
+          <div className="card">
             <h3>Your Bookings</h3>
-            <p>Booking history and details will appear here.</p>
+            <p>No bookings found yet.</p>
           </div>
         )}
 
         {activeTab === 'subscriptions' && (
-          <div className="dashboard-section">
+          <div className="card">
             <h3>Your Subscriptions</h3>
-            <p>Active and past subscriptions will be shown here.</p>
+            <p>No subscriptions found yet.</p>
           </div>
         )}
       </main>
     </div>
   );
 };
+
 
 export default CustomerDashboard;

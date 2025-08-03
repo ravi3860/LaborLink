@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { registerCustomer, registerLabor } from '../services/api';
 import { Link } from 'react-router-dom';
 import './RegistrationForm.css';
-
+import Swal from 'sweetalert2';
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -37,11 +37,11 @@ const RegistrationForm = () => {
       } else if (formData.role === 'labor') {
         res = await registerLabor(dataToSend);
       } else {
-        alert('Admin cannot register here');
+        Swal.fire('Admin cannot register here');
         return;
       }
 
-      alert(res.data.message || 'Registered Successfully!');
+      Swal.fire(res.data.message || 'Registered Successfully!');
 
       // ✅ Reset the form fields
       setFormData({
@@ -58,7 +58,7 @@ const RegistrationForm = () => {
 
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.error || error.message || 'Registration failed.');
+      Swal.fire(error.response?.data?.error || error.message || 'Registration failed.');
     }
   };
 

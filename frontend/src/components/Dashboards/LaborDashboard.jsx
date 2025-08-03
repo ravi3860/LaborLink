@@ -3,6 +3,7 @@ import { getLaborDashboard, updateLabor, deleteLabor } from '../../services/api'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './LaborDashboard.css';
+import Swal from 'sweetalert2';
 
 const LaborDashboard = () => {
   const [laborData, setLaborData] = useState(null);
@@ -38,11 +39,11 @@ const LaborDashboard = () => {
   const handleUpdate = async () => {
     try {
       const response = await updateLabor(formData);
-      alert('Details updated successfully!');
+      Swal.fire('Details updated successfully!');
       setLaborData(response.data.updatedLabor);
     } catch (error) {
       console.error('Update failed:', error);
-      alert('Failed to update details.');
+      Swal.fire('Failed to update details.');
     }
   };
 
@@ -52,12 +53,12 @@ const LaborDashboard = () => {
 
     try {
       await deleteLabor(formData._id);
-      alert('Account deleted successfully.');
+      Swal.fire('Account deleted successfully.');
       logout();
       navigate('/login');
     } catch (error) {
       console.error('Delete failed:', error);
-      alert('Failed to delete account.');
+      Swal.fire('Failed to delete account.');
     }
   };
 
