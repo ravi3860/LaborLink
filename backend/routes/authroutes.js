@@ -13,6 +13,10 @@ const {
 const { loginUser 
 } = require('../controllers/loginController');
 
+const {
+  verifyCode
+} = require('../controllers/verificationController');
+
 const authMiddleware = require('../middleware/authMiddleware');
 
 
@@ -38,6 +42,9 @@ router.delete('/labors/delete/:id', deleteLabor);
 
 // POST /api/login
 router.post('/login', loginUser);
+
+// POST /api/verify-code
+router.post('/verify-code', verifyCode);  
 
 // Protected route: Get customer dashboard data
 router.get('/customer/dashboard', authMiddleware.verifyCustomer, require('../controllers/customerController').getDashboardData);

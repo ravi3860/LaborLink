@@ -32,6 +32,16 @@ const CustomerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
+    verificationCode: {
+    type: String,
+    default: null
+    },
+
+    codeExpiresAt: {
+    type: Date,
+    default: null
+    }
 })
 
 module.exports = mongoose.model('Customer', CustomerSchema);

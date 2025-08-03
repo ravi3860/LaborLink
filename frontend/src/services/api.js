@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// ✅ Add this line at the top
+//base URL for the API
 const BASE_URL = 'http://localhost:2000/api/laborlink';
 
+// 🟢 Public routes
 export const registerCustomer = async (customerData) => {
   return await axios.post(`${BASE_URL}/register/customer`, customerData);
 };
@@ -13,6 +14,10 @@ export const registerLabor = async (laborData) => {
 
 export const loginUser = async (credentials) => {
   return await axios.post(`${BASE_URL}/login`, credentials);
+};
+
+export const verifyCode = async (data) => {
+  return await axios.post(`${BASE_URL}/verify-code`, data);
 };
 
 // 🟡 Protected routes – requires JWT token

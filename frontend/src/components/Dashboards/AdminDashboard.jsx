@@ -15,12 +15,18 @@ const AdminDashboard = () => {
     const fetchAdminData = async () => {
       try {
         const response = await getAdminDashboard();
-        setAdminUsername(response.data.adminUsername);
-        setCounts({
-          admins: response.data.adminCount || 0,
-          customers: response.data.customerCount || 0,
-          labors: response.data.laborCount || 0,
-        });
+
+        if (response.data && response.data.success) {
+          setAdminUsername(response.data.adminUsername);
+          setCounts({
+            admins: response.data.adminCount || 0,
+            customers: response.data.customerCount || 0,
+            labors: response.data.laborCount || 0,
+          });
+        } else {
+          console.error('Unexpected response:', response.data);
+          navigate('/login');
+        }
       } catch (error) {
         console.error('Failed to fetch admin dashboard:', error);
         navigate('/login');
@@ -44,7 +50,12 @@ const AdminDashboard = () => {
       <aside className="sidebar">
         <h2>Admin Panel</h2>
         <ul>
-          <li onClick={() => setActiveTab('dashboard')}>Dashboard</li>
+          <li
+            className={activeTab === 'dashboard' ? 'active' : ''}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            Dashboard
+          </li>
           <li onClick={handleLogout}>Logout</li>
         </ul>
       </aside>
