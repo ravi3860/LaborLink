@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './LoginForm.css';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -28,30 +29,35 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       const res = await loginUser(formData);
-      console.log('Login response:', res.data);
+      const data = res.data;
+      console.log('Login response:', data);
 
       if (formData.role === 'Customer') {
-        if (res.data.requiresVerification && res.data.email) {
+        if (data.requiresVerification && data.email) {
           setShowCodeInput(true);
-          setEmailForVerification(res.data.email);  // Use backend email here
-          alert(res.data.message || 'Verification code sent to your email.');
-        } else if (res.data.token && res.data.user) {
-          login(res.data.token, res.data.user.role);
-          navigate('/customer/dashboard');
+          setEmailForVerification(data.email); // ✅ set actual email from backend
+          Swal.fire('Verification Required', data.message || 'Code sent to your email', 'info');
+        } else if (data.token && data.user) {
+          login(data.token, data.user.role);
+          Swal.fire('Success', 'Login successful', 'success').then(() =>
+            navigate('/customer/dashboard')
+          );
         } else {
-          alert('Unexpected response. Please try again.');
+          Swal.fire('Error', 'Unexpected response. Please try again.', 'error');
         }
       } else {
-        if (res.data.token && res.data.user) {
-          login(res.data.token, res.data.user.role);
-          navigate(`/${res.data.user.role.toLowerCase()}/dashboard`);
+        if (data.token && data.user) {
+          login(data.token, data.user.role);
+          Swal.fire('Success', 'Login successful', 'success').then(() =>
+            navigate(`/${data.user.role.toLowerCase()}/dashboard`)
+          );
         } else {
-          alert('Login failed. Please try again.');
+          Swal.fire('Login Failed', 'Invalid credentials', 'error');
         }
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || 'Login failed');
+      Swal.fire('Error', err.response?.data?.error || 'Login failed', 'error');
     }
   };
 
@@ -60,16 +66,17 @@ const LoginForm = () => {
     try {
       const res = await axios.post('http://localhost:2000/api/laborlink/verify-code', {
         email: emailForVerification,
-        code: verificationCode
+        code: verificationCode,
       });
 
       const { token, user, message } = res.data;
       login(token, user.role);
-      alert(message || 'Login successful');
-      navigate('/customer/dashboard');
+      Swal.fire('Success', message || 'Login successful', 'success').then(() =>
+        navigate('/customer/dashboard')
+      );
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || 'Verification failed');
+      Swal.fire('Verification Failed', err.response?.data?.error || 'Invalid code', 'error');
     }
   };
 
