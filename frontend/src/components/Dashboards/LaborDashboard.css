@@ -1,21 +1,21 @@
 .labor-dashboard {
   display: flex;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f9f9;
 }
 
 .sidebar {
-  width: 220px;
-  background-color: #1e293b;
-  color: white;
-  padding: 20px;
+  width: 240px;
+  background: #2f3542;
+  color: #fff;
+  padding: 30px 20px;
 }
 
 .sidebar h2 {
-  margin-bottom: 20px;
-  font-size: 20px;
-  border-bottom: 1px solid #3b4a63;
-  padding-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: #ffa502;
 }
 
 .sidebar ul {
@@ -24,103 +24,88 @@
 }
 
 .sidebar li {
-  padding: 12px 0;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
-.sidebar li.active,
-.sidebar li:hover {
-  background-color: #374151;
-  padding-left: 10px;
+.sidebar li:hover,
+.sidebar li.active {
+  background: #ffa502;
+  color: #2f3542;
 }
 
 .dashboard-content {
   flex: 1;
   padding: 40px;
-  background-color: #f3f4f6;
+  background: #fff;
 }
 
-.profile-form-section {
-  max-width: 600px;
-  margin: 0 auto;
+.profile-form-section h2 {
+  margin-bottom: 25px;
+  font-size: 26px;
+  color: #2f3542;
 }
 
 .profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  max-width: 600px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .form-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.form-group input {
-  padding: 8px;
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.section {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .form-buttons {
   display: flex;
-  gap: 1rem;
-  margin-top: 20px;
+  gap: 15px;
 }
 
 .btn-update,
 .btn-delete {
   padding: 10px 20px;
-  font-size: 16px;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: 0.25s ease-in-out;
 }
 
 .btn-update {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #1e90ff;
+  color: white;
 }
 
 .btn-update:hover {
-  background-color: #0056b3;
+  background-color: #0c7cd5;
 }
 
 .btn-delete {
-  background-color: #dc3545;
-  color: #fff;
+  background-color: #e74c3c;
+  color: white;
 }
 
 .btn-delete:hover {
-  background-color: #a71d2a;
+  background-color: #c0392b;
 }
 
-.profile-form select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: 400;
-  background-color: white;
-  transition: border-color 0.3s ease;
-  cursor: pointer;
-}
-
-.profile-form select:focus {
-  outline: none;
-  border-color: #4c294e; /* same hover color from buttons for consistency */
-  box-shadow: 0 0 5px rgba(76, 41, 78, 0.5);
+.section {
+  padding: 20px;
+  background: #f1f2f6;
+  border-radius: 10px;
 }

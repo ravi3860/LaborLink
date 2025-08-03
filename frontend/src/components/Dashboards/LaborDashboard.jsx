@@ -62,17 +62,17 @@ const LaborDashboard = () => {
     }
   };
 
-  if (!laborData) return <p className="loading-text">Loading dashboard...</p>;
+ if (!laborData) return <p className="loading-text">Loading dashboard...</p>;
 
   return (
     <div className="labor-dashboard">
       <aside className="sidebar">
         <h2>Labor Panel</h2>
         <ul>
-          <li onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>Profile</li>
-          <li onClick={() => setActiveTab('bookings')} className={activeTab === 'bookings' ? 'active' : ''}>Bookings</li>
-          <li onClick={() => setActiveTab('subscriptions')} className={activeTab === 'subscriptions' ? 'active' : ''}>Subscriptions</li>
-          <li onClick={handleLogout}>Logout</li>
+          <li onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>👤 Profile</li>
+          <li onClick={() => setActiveTab('bookings')} className={activeTab === 'bookings' ? 'active' : ''}>📅 Bookings</li>
+          <li onClick={() => setActiveTab('subscriptions')} className={activeTab === 'subscriptions' ? 'active' : ''}>💳 Subscriptions</li>
+          <li onClick={handleLogout}>🚪 Logout</li>
         </ul>
       </aside>
 
@@ -81,35 +81,21 @@ const LaborDashboard = () => {
           <div className="profile-form-section">
             <h2>Welcome, {laborData.name}</h2>
             <form className="profile-form" onSubmit={(e) => e.preventDefault()}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input name="name" type="text" value={formData.name || ''} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label>Email:</label>
-                <input name="email" type="email" value={formData.email || ''} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label>Username:</label>
-                <input name="username" type="text" value={formData.username || ''} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label>Address:</label>
-                <input name="address" type="text" value={formData.address || ''} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label>Phone:</label>
-                <input name="phone" type="text" value={formData.phone || ''} onChange={handleChange} />
-              </div>
+              {['name', 'email', 'username', 'address', 'phone'].map((field) => (
+                <div className="form-group" key={field}>
+                  <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+                  <input
+                    name={field}
+                    type={field === 'email' ? 'email' : 'text'}
+                    value={formData[field] || ''}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
 
               <div className="form-group">
                 <label>Age Category:</label>
-                <select
-                  name="ageCategory"
-                  value={formData.ageCategory || ''}
-                  onChange={handleChange}
-                  required
-                >
+                <select name="ageCategory" value={formData.ageCategory || ''} onChange={handleChange} required>
                   <option value="">Select Age Category</option>
                   <option value="Young Adults">Young Adults (18–25)</option>
                   <option value="Adults">Adults (26–35)</option>
@@ -120,12 +106,7 @@ const LaborDashboard = () => {
 
               <div className="form-group">
                 <label>Skill Category:</label>
-                <select
-                  name="skillCategory"
-                  value={formData.skillCategory || ''}
-                  onChange={handleChange}
-                  required
-                >
+                <select name="skillCategory" value={formData.skillCategory || ''} onChange={handleChange} required>
                   <option value="">Select Skill Category</option>
                   <option value="Masons">Masons</option>
                   <option value="Electricians">Electricians</option>
@@ -165,5 +146,6 @@ const LaborDashboard = () => {
     </div>
   );
 };
+
 
 export default LaborDashboard;
