@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getCustomerDashboard, updateCustomer, deleteCustomer } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import './CustomerDashboard.css';
+import Swal from 'sweetalert2';
 
 const CustomerDashboard = () => {
   const [customerData, setCustomerData] = useState(null);
@@ -41,11 +42,11 @@ const CustomerDashboard = () => {
     e.preventDefault();
     try {
       const response = await updateCustomer(formData);
-      alert('Details updated successfully!');
+      Swal.fire('Details updated successfully!');
       setCustomerData(response.data.updatedCustomer);
     } catch (err) {
       console.error('Update failed:', err);
-      alert('Failed to update details');
+      Swal.fire('Failed to update details');
     }
   };
 
