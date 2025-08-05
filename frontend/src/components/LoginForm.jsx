@@ -81,6 +81,7 @@ const LoginForm = () => {
   };
 
   return (
+  <div className="landing-section">
     <form onSubmit={showCodeInput ? handleCodeSubmit : handleLogin} className="auth-form">
       <h2 className="auth-title">Login to LaborLink</h2>
 
@@ -158,6 +159,7 @@ const LoginForm = () => {
         </p>
       )}
     </form>
+  </div>
   );
 };
 

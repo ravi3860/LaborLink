@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 /* Reset basic */
 * {
   box-sizing: border-box;
@@ -7,23 +9,47 @@
 
 body, html, #root {
   height: 100%;
-  width: 100%; /* added for full width */
+  width: 100%;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f3f0ff, #ede7ff);
+  background: white;
   color: #4b3c8a;
   overflow-x: hidden; /* prevent horizontal scroll */
 }
 
 /* Header */
+.landing-section {
+  padding-top: 90px;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.5), 
+      rgba(255, 255, 255, 0.5)
+    ), url('../pages/Backgroundimgn1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  padding-bottom: 40px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Reduce or increase spacing as needed */
+}
+
+.logo {
+  width: 60px;
+  height: auto;
+}
 
 .header {
-  background: rgba(165, 108, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #9f79ff;
-  padding: 15px 0;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 15px 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
@@ -32,79 +58,57 @@ body, html, #root {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px; /* increased horizontal padding */
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-.logo-icon {
-  width: 32px;
-  height: 32px;
-  background-color: #3b1cc2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
+  padding: 0 30px;
 }
 
 .nav-menu {
   display: flex;
-  gap: 30px; /* increased gap for spacing */
+  gap: 30px;
 }
 
 .nav-link {
-  color: #e3dbff;
+  color: #000000cc; /* dark text */
   text-decoration: none;
   font-weight: 600;
-  font-size: 1.05rem; /* slight size increase */
+  font-size: 1.05rem;
   transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #fff;
+  color: #811ca3; /* purple on hover */
 }
 
 .user-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* slightly bigger */
+  width: 40px;
   height: 40px;
-  background-color: #f5f0ff;  /* light purple background */
+  background-color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .user-icon:hover {
-  background-color: #6b52ff;  /* deep purple */
-  color: white;
+  background-color: #d8d7df;
+  color: rgb(176, 44, 223);
 }
 
 /* Hero Section */
 
 .hero-section {
-  padding: 100px 20px 80px; /* more vertical padding */
+  padding: 100px 20px 80px;
   text-align: center;
-  max-width: 960px; /* wider max width */
+  max-width: 960px;
   margin: 0 auto;
 }
 
 .hero-title {
-  font-size: 3.75rem; /* slightly bigger */
+  font-size: 3.75rem;
   font-weight: 900;
   margin-bottom: 25px;
-  color: #6b52ff;
+  color: #030304;
   text-shadow: 0 2px 8px #d1c4ff88;
 }
 
@@ -148,11 +152,11 @@ body, html, #root {
 
 .top-workers-section {
   padding: 60px 20px 80px;
-  background: rgba(245, 240, 255, 0.7);
+  background: white;
   max-width: 1140px;
   margin: 0 auto 80px auto;
   border-radius: 20px;
-  box-shadow: 0 0 24px #d1c4ff88;
+  box-shadow: none;
 }
 
 .top-workers-container {
@@ -160,7 +164,7 @@ body, html, #root {
 }
 
 .section-title {
-  font-size: 3rem; /* bigger */
+  font-size: 3rem;
   font-weight: 900;
   margin-bottom: 60px;
   color: #6b52ff;
@@ -169,18 +173,18 @@ body, html, #root {
 
 .workers-grid {
   display: flex;
-  gap: 36px; /* more space */
+  gap: 36px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .worker-card {
   background: white;
-  box-shadow: 0 10px 26px rgba(131, 107, 255, 0.2);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
   border-radius: 20px;
   padding: 36px 24px;
-  max-width: 340px; /* a bit wider */
-  flex: 1 1 320px; /* so cards won’t shrink too much */
+  max-width: 340px;
+  flex: 1 1 320px;
   text-align: center;
   transition: box-shadow 0.3s ease;
 }
@@ -239,20 +243,22 @@ body, html, #root {
 }
 
 .worker-btn {
-  background: #5a42e8;
-  color: white;
+  background: white;
+  color: #4b3c8a;
   padding: 14px 0;
   width: 100%;
   border-radius: 18px;
   font-weight: 800;
   font-size: 1.15rem;
-  border: none;
+  border: 2px solid #4b3c8a;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .worker-btn:hover {
   background: #7b62ff;
+  color: white;
+  border-color: #7b62ff;
 }
 
 /* Features Section */
@@ -261,6 +267,8 @@ body, html, #root {
   padding: 60px 20px 80px;
   max-width: 1140px;
   margin: 0 auto 80px auto;
+  background: white;
+  box-shadow: none;
 }
 
 .features-container {
@@ -276,17 +284,17 @@ body, html, #root {
 }
 
 .feature-card {
-  background: rgba(191, 177, 255, 0.55);
+  background: white;
   border-radius: 24px;
   padding: 36px 26px;
   max-width: 240px;
   flex: 1 1 200px;
-  box-shadow: 0 10px 26px rgba(131, 107, 255, 0.22);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
-  box-shadow: 0 16px 36px rgba(131, 107, 255, 0.38);
+  box-shadow: 0 16px 36px rgba(131, 107, 255, 0.15);
 }
 
 .feature-icon {
@@ -312,11 +320,11 @@ body, html, #root {
 
 .reviews-section {
   padding: 60px 20px 80px;
-  background: rgba(245, 240, 255, 0.7);
+  background: white;
   max-width: 1140px;
   margin: 0 auto 80px auto;
   border-radius: 20px;
-  box-shadow: 0 0 24px #d1c4ff88;
+  box-shadow: none;
   text-align: center;
 }
 
@@ -336,7 +344,7 @@ body, html, #root {
 .review-card {
   background: white;
   border-radius: 20px;
-  box-shadow: 0 10px 26px rgba(131, 107, 255, 0.2);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.05);
   padding: 36px 26px;
   max-width: 300px;
   flex: 1 1 280px;
@@ -345,7 +353,7 @@ body, html, #root {
 }
 
 .review-card:hover {
-  box-shadow: 0 16px 36px rgba(131, 107, 255, 0.38);
+  box-shadow: 0 16px 36px rgba(131, 107, 255, 0.15);
 }
 
 .avatar-large {
@@ -379,9 +387,8 @@ body, html, #root {
 /* Footer */
 
 .footer {
-  background: rgba(165, 108, 255, 0.9);
-  backdrop-filter: blur(10px);
-  color: white;
+  background: white;
+  color: #4b3c8a;
   padding: 48px 30px 28px;
   margin-top: 60px;
 }
@@ -404,12 +411,12 @@ body, html, #root {
   font-weight: 700;
   margin-bottom: 22px;
   font-size: 1.3rem;
-  color: #f3ebff;
+  color: #4b3c8a;
 }
 
 .footer-text {
   font-size: 1rem;
-  color: #d1c4ffcc;
+  color: #7a7a7a;
   margin-bottom: 18px;
 }
 
@@ -423,10 +430,11 @@ body, html, #root {
   cursor: pointer;
   transition: color 0.3s ease;
   user-select: none;
+  color: #4b3c8a;
 }
 
 .social-icon:hover {
-  color: #fff;
+  color: #811ca3;
 }
 
 .footer-section ul {
@@ -438,22 +446,22 @@ body, html, #root {
 }
 
 .footer-section ul li a {
-  color: #d1c4ffcc;
+  color: #000000cc;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s ease;
 }
 
 .footer-section ul li a:hover {
-  color: #fff;
+  color: #811ca3;
 }
 
 .footer-bottom {
-  border-top: 1px solid #9f79ff;
+  border-top: 1px solid #d1c4ffcc;
   margin-top: 36px;
   text-align: center;
   font-size: 0.9rem;
-  color: #d1c4ffcc;
+  color: #7a7a7a;
   padding-top: 18px;
 }
 

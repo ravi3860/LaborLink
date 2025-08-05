@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Homepage.css";
 import { FiUser } from "react-icons/fi";
+import logo from '../pages/Black_and_White_Modern_Personal_Brand_Logo-removebg-preview.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -40,45 +41,46 @@ const HomePage = () => {
   return (
     <div className="homepage">
       {/* Header */}
-      <header className="header">
-        <div className="header-container">
-          <div className="logo-section">
-            <div className="logo-icon">L</div>
-            <span className="logo-text">LMS</span>
-          </div>
+      <div className="landing-section">
+        <header className="header">
+          <div className="header-container">
+            <div className="logo-section">
+              <img src={logo} alt="Logo" className="logo" />
+            </div>
 
-          <nav className="nav-menu">
-            <Link to="/" className="nav-link">Home</Link>
-            <Link to="/about" className="nav-link">About Us</Link>
-            <Link to="/find-worker" className="nav-link">Find a Worker</Link>
-            <Link to="/subscriptions" className="nav-link">Subscriptions</Link>
-            <Link to="/contact" className="nav-link">Contact Us</Link>
-          </nav>
+            <nav className="nav-menu">
+              <Link to="/" className="nav-link">Home</Link>
+              <Link to="/about" className="nav-link">About Us</Link>
+              <Link to="/find-worker" className="nav-link">Find a Worker</Link>
+              <Link to="/subscriptions" className="nav-link">Subscriptions</Link>
+              <Link to="/contact" className="nav-link">Contact Us</Link>
+            </nav>
 
-          <div className="user-icon-link" onClick={handleUserIconClick}>
-            <div className="user-icon">
-              <FiUser size={24} color="#6b52ff" />
+            <div className="user-icon-link" onClick={handleUserIconClick}>
+              <div className="user-icon">
+                <FiUser size={24} color="#6b52ff" />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-container">
-          <h1 className="hero-title">Manage Your Workforce with Confidence</h1>
-          <h2 className="hero-subtitle">
-            Connecting Workers, Contractors & Site Managers Seamlessly
-          </h2>
-          <p className="hero-description">
-            Easily schedule shifts, track labor availability, and monitor project
-            progress — all from one platform.
-          </p>
-          <button className="hero-button" onClick={handleGetStartedClick}>
-            Get Started
-          </button>
-        </div>
-      </section>
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-container">
+            <h1 className="hero-title">Manage Your Workforce with Confidence</h1>
+            <h2 className="hero-subtitle">
+              Connecting Workers, Contractors & Site Managers Seamlessly
+            </h2>
+            <p className="hero-description">
+              Easily schedule shifts, track labor availability, and monitor project
+              progress — all from one platform.
+            </p>
+            <button className="hero-button" onClick={handleGetStartedClick}>
+              Get Started
+            </button>
+          </div>
+        </section>
+      </div>
 
       {/* Top Rated Workers */}
       <section className="top-workers-section">
@@ -186,17 +188,12 @@ const HomePage = () => {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-section company-info">
-            <div className="logo-section">
-              <div className="logo-icon">L</div>
-              <span className="logo-text">LMS</span>
+            <div className="footer-logo-container">
+              <img src={logo} alt="Logo" className="logo" />
             </div>
             <p className="footer-text">"Your Trusted Property Partner"</p>
             <p className="footer-text">Connecting buyers and sellers with ease and transparency.</p>
             <div className="social-icons">
-              <span className="social-icon">📘</span>
-              <span className="social-icon">📸</span>
-              <span className="social-icon">🐦</span>
-              <span className="social-icon">💼</span>
             </div>
           </div>
 

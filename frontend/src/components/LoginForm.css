@@ -6,6 +6,20 @@
   --text-color: #333;
 }
 
+.landing-section {
+  min-height: 100vh;
+  padding-top: 90px;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.5), 
+      rgba(255, 255, 255, 0.5)
+    ), url('../pages/Backgroundimgn1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  padding-bottom: 40px;
+}
+
 .auth-form {
   background: var(--bg-color);
   padding: 2rem;

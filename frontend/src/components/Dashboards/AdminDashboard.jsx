@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAdminDashboard } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FaTachometerAlt, FaSignOutAlt, FaUserShield, FaUsers, FaHardHat } from 'react-icons/fa';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -15,8 +16,7 @@ const AdminDashboard = () => {
     const fetchAdminData = async () => {
       try {
         const response = await getAdminDashboard();
-
-        if (response.data && response.data.success) {
+        if (response.data?.success) {
           setAdminUsername(response.data.adminUsername);
           setCounts({
             admins: response.data.adminCount || 0,
@@ -24,11 +24,9 @@ const AdminDashboard = () => {
             labors: response.data.laborCount || 0,
           });
         } else {
-          console.error('Unexpected response:', response.data);
           navigate('/login');
         }
-      } catch (error) {
-        console.error('Failed to fetch admin dashboard:', error);
+      } catch {
         navigate('/login');
       }
     };
@@ -41,47 +39,50 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
-  if (!adminUsername) {
-    return <p className="loading-text">Loading admin dashboard...</p>;
-  }
-
   return (
     <div className="admin-dashboard">
       <aside className="sidebar">
-        <h2>Admin Panel</h2>
-        <ul>
-          <li
-            className={activeTab === 'dashboard' ? 'active' : ''}
-            onClick={() => setActiveTab('dashboard')}
-          >
-            Dashboard
+        <h2 className="logo">LABOR<span>LINK</span></h2>
+        <ul className="nav-list">
+          <li className={activeTab === 'dashboard' ? 'nav-item active' : 'nav-item'} onClick={() => setActiveTab('dashboard')}>
+            <FaTachometerAlt className="icon" />
+            <span>Dashboard</span>
           </li>
-          <li onClick={handleLogout}>Logout</li>
+          <li className="nav-item" onClick={handleLogout}>
+            <FaSignOutAlt className="icon" />
+            <span>Logout</span>
+          </li>
         </ul>
       </aside>
 
-      <main className="dashboard-content">
+      <div className="main-content">
+        <header className="topbar">
+          <h3>Welcome, <strong>{adminUsername}</strong></h3>
+        </header>
+
         {activeTab === 'dashboard' && (
-          <div className="section">
-            <h2>Welcome, {adminUsername}</h2>
-            <p className="summary-text">System Overview</p>
-            <div className="summary-boxes">
-              <div className="summary-box">
+          <section className="dashboard-section">
+            <h2>System Overview</h2>
+            <div className="cards">
+              <div className="card">
+                <FaUserShield className="card-icon" />
                 <h3>{counts.admins}</h3>
                 <p>Admins</p>
               </div>
-              <div className="summary-box">
+              <div className="card">
+                <FaUsers className="card-icon" />
                 <h3>{counts.customers}</h3>
                 <p>Customers</p>
               </div>
-              <div className="summary-box">
+              <div className="card">
+                <FaHardHat className="card-icon" />
                 <h3>{counts.labors}</h3>
                 <p>Labors</p>
               </div>
             </div>
-          </div>
+          </section>
         )}
-      </main>
+      </div>
     </div>
   );
 };

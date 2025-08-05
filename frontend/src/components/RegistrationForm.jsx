@@ -63,6 +63,7 @@ const RegistrationForm = () => {
   };
 
   return (
+  <div className="landing-section">
     <form onSubmit={handleSubmit} className="registration-form">
       <h2 className="form-title">Register in Laborlink</h2>
 
@@ -205,6 +206,7 @@ const RegistrationForm = () => {
             Already have an account? <Link to="/login">Log in</Link>
         </p>
     </form>
+  </div>
   );
 };
 

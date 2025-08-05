@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getLaborDashboard, updateLabor, deleteLabor } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import './LaborDashboard.css';
 import Swal from 'sweetalert2';
+import { FaUser, FaCalendarCheck, FaRegCreditCard, FaSignOutAlt} from 'react-icons/fa';
+import './LaborDashboard.css';
 
 const LaborDashboard = () => {
   const [laborData, setLaborData] = useState(null);
@@ -47,6 +48,18 @@ const LaborDashboard = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    handleUpdate();
+  };
+
   const handleDelete = async () => {
     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action is irreversible.');
     if (!confirmDelete) return;
@@ -62,40 +75,54 @@ const LaborDashboard = () => {
     }
   };
 
- if (!laborData) return <p className="loading-text">Loading dashboard...</p>;
+  if (!laborData) return <p className="loading-text">Loading dashboard...</p>;
 
   return (
     <div className="labor-dashboard">
-      <aside className="sidebar">
+      <aside className="labor-sidebar">
         <h2>Labor Panel</h2>
-        <ul>
-          <li onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>👤 Profile</li>
-          <li onClick={() => setActiveTab('bookings')} className={activeTab === 'bookings' ? 'active' : ''}>📅 Bookings</li>
-          <li onClick={() => setActiveTab('subscriptions')} className={activeTab === 'subscriptions' ? 'active' : ''}>💳 Subscriptions</li>
-          <li onClick={handleLogout}>🚪 Logout</li>
+        <ul className="nav-list">
+          <li onClick={() => setActiveTab('profile')} className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}>
+           <FaUser /> Profile
+          </li>
+          <li onClick={() => setActiveTab('bookings')} className={`nav-item ${activeTab === 'bookings' ? 'active' : ''}`}>
+            <FaCalendarCheck /> Bookings
+          </li>
+          <li onClick={() => setActiveTab('subscriptions')} className={`nav-item ${activeTab === 'subscriptions' ? 'active' : ''}`}>
+            <FaRegCreditCard /> Subscriptions
+          </li>
+          <li onClick={handleLogout} className="nav-item logout-item"><FaSignOutAlt /> Logout</li>
         </ul>
       </aside>
 
-      <main className="dashboard-content">
+      <main className="labor-main">
         {activeTab === 'profile' && (
-          <div className="profile-form-section">
-            <h2>Welcome, {laborData.name}</h2>
-            <form className="profile-form" onSubmit={(e) => e.preventDefault()}>
+          <section className="profile-section">
+            <h2 className="section-title">Welcome, {laborData.name}</h2>
+            <form className="profile-form" onSubmit={handleSubmit} noValidate>
               {['name', 'email', 'username', 'address', 'phone'].map((field) => (
                 <div className="form-group" key={field}>
-                  <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+                  <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
                   <input
+                    id={field}
                     name={field}
                     type={field === 'email' ? 'email' : 'text'}
                     value={formData[field] || ''}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               ))}
 
               <div className="form-group">
-                <label>Age Category:</label>
-                <select name="ageCategory" value={formData.ageCategory || ''} onChange={handleChange} required>
+                <label htmlFor="ageCategory">Age Category:</label>
+                <select
+                  id="ageCategory"
+                  name="ageCategory"
+                  value={formData.ageCategory || ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Select Age Category</option>
                   <option value="Young Adults">Young Adults (18–25)</option>
                   <option value="Adults">Adults (26–35)</option>
@@ -105,8 +132,14 @@ const LaborDashboard = () => {
               </div>
 
               <div className="form-group">
-                <label>Skill Category:</label>
-                <select name="skillCategory" value={formData.skillCategory || ''} onChange={handleChange} required>
+                <label htmlFor="skillCategory">Skill Category:</label>
+                <select
+                  id="skillCategory"
+                  name="skillCategory"
+                  value={formData.skillCategory || ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Select Skill Category</option>
                   <option value="Masons">Masons</option>
                   <option value="Electricians">Electricians</option>
@@ -121,31 +154,32 @@ const LaborDashboard = () => {
                 </select>
               </div>
 
-              <div className="form-buttons">
-                <button type="button" className="btn-update" onClick={handleUpdate}>Update Details</button>
-                <button type="button" className="btn-delete" onClick={handleDelete}>Delete Account</button>
+              <div className="form-actions">
+                <button type="submit" className="btn btn-update">Update Details</button>
+                <button type="button" className="btn btn-delete" onClick={handleDelete}>Delete Account</button>
               </div>
             </form>
-          </div>
+          </section>
         )}
 
         {activeTab === 'bookings' && (
-          <div className="section">
-            <h2>Your Bookings</h2>
+          <section className="bookings-section section-placeholder">
+            <h2 className="section-title">Your Bookings</h2>
             <p>Booking details will appear here.</p>
-          </div>
+          </section>
         )}
 
         {activeTab === 'subscriptions' && (
-          <div className="section">
-            <h2>Your Subscriptions</h2>
+          <section className="subscriptions-section section-placeholder">
+            <h2 className="section-title">Your Subscriptions</h2>
             <p>Subscription info will appear here.</p>
-          </div>
+          </section>
         )}
       </main>
     </div>
   );
 };
 
-
 export default LaborDashboard;
+
+
