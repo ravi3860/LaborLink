@@ -3,7 +3,7 @@ import { getLaborDashboard, updateLabor, deleteLabor } from '../../services/api'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
-import { FaUser, FaCalendarCheck, FaRegCreditCard, FaSignOutAlt} from 'react-icons/fa';
+import { FaUser, FaCalendarCheck, FaRegCreditCard, FaSignOutAlt } from 'react-icons/fa';
 import './LaborDashboard.css';
 
 const LaborDashboard = () => {
@@ -50,20 +50,17 @@ const LaborDashboard = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const form = e.target;
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-
     handleUpdate();
   };
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm('Are you sure you want to delete your account? This action is irreversible.');
     if (!confirmDelete) return;
-
     try {
       await deleteLabor(formData._id);
       Swal.fire('Account deleted successfully.');
@@ -83,7 +80,7 @@ const LaborDashboard = () => {
         <h2>Labor Panel</h2>
         <ul className="nav-list">
           <li onClick={() => setActiveTab('profile')} className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}>
-           <FaUser /> Profile
+            <FaUser /> Profile
           </li>
           <li onClick={() => setActiveTab('bookings')} className={`nav-item ${activeTab === 'bookings' ? 'active' : ''}`}>
             <FaCalendarCheck /> Bookings
@@ -97,9 +94,40 @@ const LaborDashboard = () => {
 
       <main className="labor-main">
         {activeTab === 'profile' && (
-          <section className="profile-section">
-            <h2 className="section-title">Welcome, {laborData.name}</h2>
-            <form className="profile-form" onSubmit={handleSubmit} noValidate>
+          <section className="dashboard-grid">
+            <div className="profile-overview">
+          <div className="profile-header">
+            <div className="avatar-circle">
+              {laborData.name?.charAt(0).toUpperCase()}
+            </div>
+            <div className="profile-info">
+              <h3>{laborData.name}</h3>
+              <p className="role-label">{laborData.skillCategory}</p>
+            </div>
+          </div>
+
+          <div className="profile-section-card">
+            <h4>Contact Information</h4>
+            <p><strong>Email:</strong> {laborData.email}</p>
+            <p><strong>Phone:</strong> {laborData.phone}</p>
+            <p><strong>Username:</strong> {laborData.username}</p>
+          </div>
+
+          <div className="profile-section-card">
+            <h4>Address</h4>
+            <p>{laborData.address}</p>
+          </div>
+
+          <div className="profile-section-card">
+            <h4>Personal Details</h4>
+            <p><strong>Age Category:</strong> {laborData.ageCategory}</p>
+            <p><strong>Skill Category:</strong> {laborData.skillCategory}</p>
+          </div>
+        </div>
+
+
+            <form className="profile-form update-section" onSubmit={handleSubmit} noValidate>
+              <h3>Update Details</h3>
               {['name', 'email', 'username', 'address', 'phone'].map((field) => (
                 <div className="form-group" key={field}>
                   <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
@@ -155,22 +183,22 @@ const LaborDashboard = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="btn btn-update">Update Details</button>
-                <button type="button" className="btn btn-delete" onClick={handleDelete}>Delete Account</button>
+                <button type="submit" className="btn btn-update">Update</button>
+                <button type="button" className="btn btn-delete" onClick={handleDelete}>Delete</button>
               </div>
             </form>
           </section>
         )}
 
         {activeTab === 'bookings' && (
-          <section className="bookings-section section-placeholder">
+          <section className="section-placeholder">
             <h2 className="section-title">Your Bookings</h2>
             <p>Booking details will appear here.</p>
           </section>
         )}
 
         {activeTab === 'subscriptions' && (
-          <section className="subscriptions-section section-placeholder">
+          <section className="section-placeholder">
             <h2 className="section-title">Your Subscriptions</h2>
             <p>Subscription info will appear here.</p>
           </section>
@@ -181,5 +209,3 @@ const LaborDashboard = () => {
 };
 
 export default LaborDashboard;
-
-

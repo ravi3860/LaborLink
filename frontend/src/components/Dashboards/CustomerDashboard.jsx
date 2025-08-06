@@ -3,7 +3,7 @@ import { getCustomerDashboard, updateCustomer, deleteCustomer } from '../../serv
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import './CustomerDashboard.css';
-import { FaUser, FaCalendarCheck, FaRegCreditCard, FaSignOutAlt} from 'react-icons/fa';
+import { FaUser, FaCalendarCheck, FaRegCreditCard, FaSignOutAlt } from 'react-icons/fa';
 
 const CustomerDashboard = () => {
   const [customerData, setCustomerData] = useState(null);
@@ -71,107 +71,82 @@ const CustomerDashboard = () => {
       <aside className="customer-sidebar">
         <h2 className="customer-sidebar-title">Customer Panel</h2>
         <ul className="customer-sidebar-nav">
-          <li
-            className={`customer-nav-item ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
-          >
+          <li className={`customer-nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
             <FaUser /> Profile
           </li>
-          <li
-            className={`customer-nav-item ${activeTab === 'bookings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('bookings')}
-          >
+          <li className={`customer-nav-item ${activeTab === 'bookings' ? 'active' : ''}`} onClick={() => setActiveTab('bookings')}>
             <FaCalendarCheck /> Bookings
           </li>
-          <li
-            className={`customer-nav-item ${activeTab === 'subscriptions' ? 'active' : ''}`}
-            onClick={() => setActiveTab('subscriptions')}
-          >
-            <FaRegCreditCard />  Subscriptions
+          <li className={`customer-nav-item ${activeTab === 'subscriptions' ? 'active' : ''}`} onClick={() => setActiveTab('subscriptions')}>
+            <FaRegCreditCard /> Subscriptions
           </li>
-          <li
-            className="customer-nav-item customer-logout"
-            onClick={handleLogout}
-          >
-            <FaSignOutAlt />  Logout
+          <li className="customer-nav-item customer-logout" onClick={handleLogout}>
+            <FaSignOutAlt /> Logout
           </li>
         </ul>
       </aside>
 
       <main className="customer-main-content">
         {activeTab === 'profile' && (
-          <section className="customer-card">
-            <h3 className="customer-card-title">My Profile</h3>
-            <form className="customer-form" onSubmit={handleUpdate} noValidate>
-              <label htmlFor="name">
-                Name:
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={formData.name || ''}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-
-              <label htmlFor="username">
-                Username:
-                <input
-                  id="username"
-                  type="text"
-                  name="username"
-                  value={formData.username || ''}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-
-              <label htmlFor="email">
-                Email:
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email || ''}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-
-              <label htmlFor="address">
-                Address:
-                <input
-                  id="address"
-                  type="text"
-                  name="address"
-                  value={formData.address || ''}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-
-              <label htmlFor="phone">
-                Phone:
-                <input
-                  id="phone"
-                  type="text"
-                  name="phone"
-                  value={formData.phone || ''}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-
-              <div className="customer-button-group">
-                <button type="submit" className="customer-btn customer-btn-primary">
-                  Update
-                </button>
-                <button type="button" className="customer-btn customer-btn-danger" onClick={handleDelete}>
-                  Delete Account
-                </button>
+          <section className="dashboard-grid">
+            {/* Left Column: Profile Overview */}
+            <div className="profile-overview">
+              <div className="profile-header">
+                <div className="avatar-circle">{customerData.name?.charAt(0).toUpperCase()}</div>
+                <div className="profile-info">
+                  <h3>{customerData.name}</h3>
+                  <p className="role-label">Customer</p>
+                </div>
               </div>
-            </form>
+
+              <div className="profile-section-card">
+                <h4>Contact Information</h4>
+                <p><strong>Email:</strong> {customerData.email}</p>
+                <p><strong>Phone:</strong> {customerData.phone}</p>
+                <p><strong>Username:</strong> {customerData.username}</p>
+              </div>
+
+              <div className="profile-section-card">
+                <h4>Address</h4>
+                <p>{customerData.address}</p>
+              </div>
+            </div>
+
+            {/* Right Column: Update/Delete Form */}
+            <div className="profile-update-form">
+              <h3 className="customer-card-title">Update Details</h3>
+              <form className="customer-form" onSubmit={handleUpdate} noValidate>
+                <label htmlFor="name">
+                  Name:
+                  <input id="name" type="text" name="name" value={formData.name || ''} onChange={handleChange} required />
+                </label>
+
+                <label htmlFor="username">
+                  Username:
+                  <input id="username" type="text" name="username" value={formData.username || ''} onChange={handleChange} required />
+                </label>
+
+                <label htmlFor="email">
+                  Email:
+                  <input id="email" type="email" name="email" value={formData.email || ''} onChange={handleChange} required />
+                </label>
+
+                <label htmlFor="address">
+                  Address:
+                  <input id="address" type="text" name="address" value={formData.address || ''} onChange={handleChange} required />
+                </label>
+
+                <label htmlFor="phone">
+                  Phone:
+                  <input id="phone" type="text" name="phone" value={formData.phone || ''} onChange={handleChange} required />
+                </label>
+
+                <div className="customer-button-group">
+                  <button type="submit" className="customer-btn customer-btn-primary">Update</button>
+                  <button type="button" className="customer-btn customer-btn-danger" onClick={handleDelete}>Delete Account</button>
+                </div>
+              </form>
+            </div>
           </section>
         )}
 
