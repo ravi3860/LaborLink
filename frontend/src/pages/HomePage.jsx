@@ -26,7 +26,7 @@ const HomePage = () => {
 
   const handleGetStartedClick = () => {
     if (!token) {
-      navigate("/register");
+      navigate("/select-role");
     } else if (role === "Customer") {
       navigate("/customer/dashboard");
     } else if (role === "Labor") {

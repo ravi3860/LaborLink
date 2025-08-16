@@ -7,6 +7,7 @@ import AboutUs from "./pages/AboutUsPage";
 import FindWorker from "./pages/FindandWorkerPage";
 import Subscriptions from "./pages/SubscriptionsPage";
 import ContactUs from "./pages/ContactUsPage";
+import RoleSelectionPage from './pages/RoleSelectionPage';
 import Register from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
 import CustomerDashboard from './components/Dashboards/CustomerDashboard';
@@ -32,7 +33,8 @@ function App() {
           <Route path="/find-worker" element={<FindWorker />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/select-role" element={<RoleSelectionPage />} />
+          <Route path="/register/:role" element={<Register />} />
           <Route path="/login" element={<LoginPage />} />
 
           {/* Protected Routes */}

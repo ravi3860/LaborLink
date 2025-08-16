@@ -1,13 +1,35 @@
-// src/components/RegistrationForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { FaUser, FaIdBadge, FaLock, FaEnvelope, FaHome, FaPhone, FaChild, FaUserTie, FaUsers, FaUserShield, FaHammer, FaWrench, FaPaintBrush, FaCarSide, FaTools } from 'react-icons/fa';
 import { registerCustomer, registerLabor } from '../services/api';
-import { Link } from 'react-router-dom';
-import './RegistrationForm.css';
 import Swal from 'sweetalert2';
+import './RegistrationForm.css';
+
+const ageOptions = [
+  { value: 'Young Adults', label: 'Young Adults (18–25)', icon: <FaChild /> },
+  { value: 'Adults', label: 'Adults (26–35)', icon: <FaUserTie /> },
+  { value: 'Middle-aged Workers', label: 'Middle-aged (36–50)', icon: <FaUsers /> },
+  { value: 'Senior Workers', label: 'Senior (51+)', icon: <FaUserShield /> },
+];
+
+const skillOptions = [
+  { value: 'Masons', label: 'Masons', icon: <FaHammer /> },
+  { value: 'Electricians', label: 'Electricians', icon: <FaWrench /> },
+  { value: 'Plumbers', label: 'Plumbers', icon: <FaWrench /> },
+  { value: 'Painters', label: 'Painters', icon: <FaPaintBrush /> },
+  { value: 'Carpenters', label: 'Carpenters', icon: <FaCarSide /> },
+  { value: 'Tile Layers', label: 'Tile Layers', icon: <FaTools /> },
+  { value: 'Welders', label: 'Welders', icon: <FaHammer /> },
+  { value: 'Roofers', label: 'Roofers', icon: <FaTools /> },
+  { value: 'Helpers/General Labourers', label: 'Helpers/General', icon: <FaUsers /> },
+  { value: 'Scaffolders', label: 'Scaffolders', icon: <FaHammer /> },
+];
 
 const RegistrationForm = () => {
+  const { role } = useParams();
+
   const [formData, setFormData] = useState({
-    role: 'customer',
+    role: role || 'customer',
     name: '',
     username: '',
     password: '',
@@ -18,14 +40,21 @@ const RegistrationForm = () => {
     skillCategory: '',
   });
 
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, role: role || 'customer' }));
+  }, [role]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSelect = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       let res;
       const dataToSend = { ...formData };
@@ -37,15 +66,13 @@ const RegistrationForm = () => {
       } else if (formData.role === 'labor') {
         res = await registerLabor(dataToSend);
       } else {
-        Swal.fire('Admin cannot register here');
+        Swal.fire('Invalid role selection.');
         return;
       }
 
       Swal.fire(res.data.message || 'Registered Successfully!');
-
-      // ✅ Reset the form fields
       setFormData({
-        role: 'customer',
+        role: role || 'customer',
         name: '',
         username: '',
         password: '',
@@ -55,158 +82,135 @@ const RegistrationForm = () => {
         ageCategory: '',
         skillCategory: '',
       });
-
     } catch (error) {
-      console.error(error);
       Swal.fire(error.response?.data?.error || error.message || 'Registration failed.');
     }
   };
 
   return (
-  <div className="landing-section">
-    <form onSubmit={handleSubmit} className="registration-form">
-      <h2 className="form-title">Register in Laborlink</h2>
+    <div className="registration-wrapper">
+      <div className="rg-shadow-box">
+        <div className="rg-header">
+          <h2>Register as {role === 'labor' ? 'Labor' : 'Customer'}</h2>
+          <p>Please fill out the form below to get started.</p>
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="role" className="form-label">Role:</label>
-        <select
-          id="role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="form-select"
-        >
-          <option value="customer">Customer</option>
-          <option value="labor">Labor</option>
-          <option value="admin" disabled>Admin (Login Only)</option>
-        </select>
-      </div>
-
-      <div className="form-group">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          onChange={handleChange}
-          value={formData.name}
-          required
-          className="form-input"
-        />
-      </div>
-
-      <div className="form-group">
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-          value={formData.username}
-          required
-          className="form-input"
-        />
-      </div>
-
-      <div className="form-group">
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          value={formData.password}
-          required
-          className="form-input"
-        />
-      </div>
-
-      <div className="form-group">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          value={formData.email}
-          required
-          className="form-input"
-        />
-      </div>
-
-      <div className="form-group">
-        <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          onChange={handleChange}
-          value={formData.address}
-          required
-          className="form-input"
-        />
-      </div>
-
-      <div className="form-group">
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          onChange={handleChange}
-          value={formData.phone}
-          required
-          className="form-input"
-        />
-      </div>
-
-      {formData.role === 'labor' && (
-        <>
-          <div className="form-group">
-            <label htmlFor="ageCategory" className="form-label">Age Category:</label>
-            <select
-              id="ageCategory"
-              name="ageCategory"
-              value={formData.ageCategory}
+        <form onSubmit={handleSubmit} className="rg-form">
+          <div className="rg-input-group">
+            <FaUser className="input-icon" />
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
               onChange={handleChange}
               required
-              className="form-select"
-            >
-              <option value="">Select Age Category</option>
-              <option value="Young Adults">Young Adults (18–25)</option>
-              <option value="Adults">Adults (26–35)</option>
-              <option value="Middle-aged Workers">Middle-aged Workers (36–50)</option>
-              <option value="Senior Workers">Senior Workers (51+)</option>
-            </select>
+            />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="skillCategory" className="form-label">Skill Category:</label>
-            <select
-              id="skillCategory"
-              name="skillCategory"
-              value={formData.skillCategory}
+          <div className="rg-input-group">
+            <FaIdBadge className="input-icon" />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
               onChange={handleChange}
               required
-              className="form-select"
-            >
-              <option value="">--Select Skill--</option>
-              <option value="Masons">Masons</option>
-              <option value="Electricians">Electricians</option>
-              <option value="Plumbers">Plumbers</option>
-              <option value="Painters">Painters</option>
-              <option value="Carpenters">Carpenters</option>
-              <option value="Tile Layers">Tile Layers</option>
-              <option value="Welders">Welders</option>
-              <option value="Roofers">Roofers</option>
-              <option value="Helpers/General Labourers">Helpers/General Labourers</option>
-              <option value="Scaffolders">Scaffolders</option>
-            </select>
+            />
           </div>
-        </>
-      )}
 
-      <button type="submit" className="submit-btn">Register</button>
+          <div className="rg-input-group">
+            <FaLock className="input-icon" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <p className="switch-link">
-            Already have an account? <Link to="/login">Log in</Link>
-        </p>
-    </form>
-  </div>
+          <div className="rg-input-group">
+            <FaEnvelope className="input-icon" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="rg-input-group">
+            <FaHome className="input-icon" />
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="rg-input-group">
+            <FaPhone className="input-icon" />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {formData.role === 'labor' && (
+            <>
+              <div className="select-group">
+                <p className="select-label">Select Age Category</p>
+                <div className="select-cards">
+                  {ageOptions.map((opt) => (
+                    <div
+                      key={opt.value}
+                      className={`select-card ${formData.ageCategory === opt.value ? 'selected' : ''}`}
+                      onClick={() => handleSelect('ageCategory', opt.value)}
+                    >
+                      {opt.icon}
+                      <span>{opt.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="select-group">
+                <p className="select-label">Select Skill Category</p>
+                <div className="select-cards">
+                  {skillOptions.map((opt) => (
+                    <div
+                      key={opt.value}
+                      className={`select-card ${formData.skillCategory === opt.value ? 'selected' : ''}`}
+                      onClick={() => handleSelect('skillCategory', opt.value)}
+                    >
+                      {opt.icon}
+                      <span>{opt.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <button type="submit" className="rg-submit-btn">Next Step</button>
+          <p className="rg-login-link">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -83,3 +83,17 @@ export const getAdminDashboard = async () => {
     }
   });
 };
+
+// Toggle 2-step verification (enable/disable)
+export const toggleTwoStepVerification = async (customerId, enable) => {
+  const token = localStorage.getItem('token');
+  return await axios.put(
+    `${BASE_URL}/customer/two-step`,
+    { customerId, enable },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+};

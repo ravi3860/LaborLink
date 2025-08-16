@@ -28,48 +28,53 @@ const loginUser = async (req, res) => {
 
     if (role === 'Customer') {
       user = await Customer.findOne({ username });
-    } else if (role === 'Labor') {
-      user = await Labor.findOne({ username });
-    } else if (role === 'Admin') {
-      user = await Admin.findOne({ username });
-    } else {
-      return res.status(400).json({ error: 'Invalid role selected' });
-    }
+      if (!user) return res.status(404).json({ error: 'Customer not found' });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(401).json({ error: 'Incorrect password' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Incorrect password' });
-    }
+      // Only send verification code if 2-step is enabled
+      if (user.twoStepEnabled) {
+        const code = generateVerificationCode();
+        const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
 
-    // === 2-STEP VERIFICATION for Customers only ===
-    if (role === 'Customer') {
-      const code = generateVerificationCode();
-      const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+        user.verificationCode = code;
+        user.codeExpiresAt = expiry;
+        await user.save();
 
-      user.verificationCode = code;
-      user.codeExpiresAt = expiry;
-      await user.save();
+        // Send email
+        await transporter.sendMail({
+          from: `"LaborLink Verification" <${process.env.EMAIL_USER}>`,
+          to: user.email,
+          subject: 'Your Verification Code',
+          html: `<p>Your verification code is: <b>${code}</b></p><p>This code will expire in 10 minutes.</p>`,
+        });
 
-      // Send email
-      await transporter.sendMail({
-        from: `"LaborLink Verification" <${process.env.EMAIL_USER}>`,
-        to: user.email,
-        subject: 'Your Verification Code',
-        html: `<p>Your verification code is: <b>${code}</b></p><p>This code will expire in 10 minutes.</p>`,
-      });
+        return res.status(200).json({
+          message: 'Verification code sent to your email',
+          requiresVerification: true,
+          userId: user._id,
+          email: user.email,
+        });
+      }
+
+      // 2-step disabled → issue JWT directly
+      const payload = { id: user._id, username: user.username, role: 'Customer' };
+      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 
       return res.status(200).json({
-        message: 'Verification code sent to your email',
-        requiresVerification: true,
-        userId: user._id,
-        email: user.email
+        message: 'Customer login successful',
+        token,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: 'Customer',
+        },
+        twoStepEnabled: false,
       });
     }
-
+    
     // For Labor and Admin (no 2-step verification)
     const payload = {
       id: user._id,
