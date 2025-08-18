@@ -346,46 +346,94 @@ body {
   font-size: 12px;
 }
 
-.labor-profile-update-form { padding: 24px; }
-.labor-card-head { margin-bottom: 12px; }
+.labor-profile-update-form {
+  grid-column: 1 / -1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 36px;
+  border-radius: 20px;
+  background: var(--white-color);
+  box-shadow: 0 12px 40px rgba(109, 40, 217, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+} 
 
+/* Card Head */
+.labor-card-head {
+  margin-bottom: 16px;
+}
 .labor-card-title {
-  color: var(--primary-color);
-  margin: 0 0 6px 0;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 4px;
 }
 .labor-card-subtitle {
-  margin: 0;
-  color: var(--gray-color);
   font-size: 14px;
+  color: var(--gray-color);
+}
+.labor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.labor-form { display: flex; flex-direction: column; gap: 18px; }
+.labor-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-.labor-input-group { display: flex; flex-direction: column; gap: 8px; }
 .labor-input-group label {
   font-weight: 700;
   color: var(--dark-gray);
   font-size: 14px;
 }
+
 .labor-input-group input,
+.labor-input-group textarea,
 .labor-select {
   padding: 12px 14px;
   font-size: 15px;
-  border-radius: 12px;
-  border: 1.6px solid var(--border-color);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--white-color);
+  transition: all 0.25s ease;
   width: 100%;
 }
-.labor-input-group input::placeholder { color: #a3a3a3; }
+
 .labor-input-group input:focus,
+.labor-input-group textarea:focus,
 .labor-select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.25);
-  background: #fff;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2);
+}
+
+/* Projects Section */
+.labor-project-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.labor-project-row input {
+  flex: 1 1 200px;
+}
+.labor-project-row button {
+  flex: 0 0 auto;
+  background-color: var(--error-color);
+  color: var(--white-color);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+.labor-project-row button:hover {
+  background-color: #b91c1c;
 }
 
 /* Input hint */
@@ -401,31 +449,151 @@ body {
   flex-wrap: wrap;
 }
 
-/* Buttons */
-.labor-btn {
-  padding: 12px 20px;
-  font-weight: 800;
-  border: none;
+/* Add Project Button */
+.labor-btn-secondary {
+  background-color: var(--accent-color);
+  color: var(--white-color);
+  font-weight: 700;
+  padding: 10px 18px;
   border-radius: 14px;
-  font-size: 14px;
+  border: none;
   cursor: pointer;
-  transition: transform 0.08s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+  align-self: flex-start;
 }
-.labor-btn:active { transform: translateY(1px); }
+.labor-btn-secondary:hover {
+  background-color: var(--primary-color);
+}
 
+/* Save & Delete Buttons Row */
+.labor-button-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
 .labor-btn-primary {
   background-color: var(--primary-color);
   color: var(--white-color);
-  box-shadow: 0 8px 18px rgba(109, 40, 217, 0.25);
+  font-weight: 800;
+  padding: 12px 24px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
 }
-.labor-btn-primary:hover { background-color: var(--accent-color); }
-
+.labor-btn-primary:hover {
+  background-color: var(--accent-color);
+}
 .labor-btn-danger {
   background-color: var(--error-color);
   color: var(--white-color);
-  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.2);
+  font-weight: 800;
+  padding: 12px 24px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.25);
 }
-.labor-btn-danger:hover { background-color: #b91c1c; }
+.labor-btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* Group Wrapper */
+.cus-profile-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* Labels */
+.cus-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--dark-gray);
+}
+
+.cus-required {
+  color: var(--error-color);
+}
+
+/* Inputs & Textarea */
+.cus-input,
+.cus-textarea,
+.cus-select {
+  padding: 12px 14px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--white-color);
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.cus-input:focus,
+.cus-textarea:focus,
+.cus-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2);
+}
+
+/* Textarea */
+.cus-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Projects Row */
+.cus-project-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.cus-project-row .cus-input {
+  flex: 1 1 200px;
+}
+
+/* Remove Project Button */
+.cus-btn-remove {
+  background-color: var(--error-color);
+  color: var(--white-color);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+.cus-btn-remove:hover {
+  background-color: #b91c1c;
+}
+
+/* Add Project Button */
+.cus-btn-add {
+  background-color: var(--accent-color);
+  color: var(--white-color);
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.25s ease;
+}
+.cus-btn-add:hover {
+  background-color: var(--primary-color);
+}
+
+/* Responsive for mobile */
+@media (max-width: 720px) {
+  .cus-project-row {
+    flex-direction: column;
+  }
+}
+
 
 /* Cards */
 .labor-card {

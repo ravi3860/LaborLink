@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Homepage.css";
 import { FiUser } from "react-icons/fi";
 import logo from '../pages/Black_and_White_Modern_Personal_Brand_Logo-removebg-preview.png';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { AiFillStar } from "react-icons/ai";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -37,32 +39,39 @@ const HomePage = () => {
       navigate("/register");
     }
   };
-
+  
   return (
     <div className="homepage">
       {/* Header */}
-      <div className="landing-section">
+      <div className="landing-sectionhomepage">
         <header className="header">
-          <div className="header-container">
-            <div className="logo-section">
-              <img src={logo} alt="Logo" className="logo" />
-            </div>
+        <div className="header-container">
+          <div className="logo-section">
+            <span className="logo-text">LaborLink</span>
+          </div>
 
-            <nav className="nav-menu">
-              <Link to="/" className="nav-link">Home</Link>
-              <Link to="/about" className="nav-link">About Us</Link>
-              <Link to="/find-worker" className="nav-link">Find a Worker</Link>
-              <Link to="/subscriptions" className="nav-link">Subscriptions</Link>
-              <Link to="/contact" className="nav-link">Contact Us</Link>
-            </nav>
+          <nav className="nav-menu">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/about" className="nav-link">About Us</Link>
+            <Link to="/find-worker" className="nav-link">Find a Worker</Link>
+            <Link to="/subscriptions" className="nav-link">Subscriptions</Link>
+            <Link to="/contact" className="nav-link">Contact Us</Link>
+          </nav>
 
-            <div className="user-icon-link" onClick={handleUserIconClick}>
-              <div className="user-icon">
-                <FiUser size={24} color="#6b52ff" />
-              </div>
+          <div className="user-icon-link" onClick={handleUserIconClick}>
+            <div className="user-icon">
+              <FiUser size={24} />
             </div>
           </div>
-        </header>
+
+          {/* Mobile menu icon placeholder */}
+          <div className="mobile-menu-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </header>
 
         {/* Hero Section */}
         <section className="hero-section">
@@ -85,7 +94,7 @@ const HomePage = () => {
       {/* Top Rated Workers */}
       <section className="top-workers-section">
         <div className="top-workers-container">
-          <h2 className="section-title">Top Rated Workers</h2>
+           <h2 className="section-title">Top Rated Workers</h2>
           <div className="workers-grid">
             <div className="worker-card">
               <div className="avatar">SE</div>
@@ -93,7 +102,11 @@ const HomePage = () => {
               <p className="worker-location">Colombo</p>
               <p className="worker-rate">LKR 3,500/day</p>
               <p className="worker-description">Reliable and experienced in large-scale projects.</p>
-              <div className="worker-rating">★★★★★</div>
+              <div className="worker-rating">
+                {[...Array(5)].map((_, i) => (
+                  <AiFillStar key={i} color="#f2c94c" size={22} />
+                ))}
+              </div>
               <button className="worker-btn">View Profile</button>
             </div>
 
@@ -103,7 +116,11 @@ const HomePage = () => {
               <p className="worker-location">Kandy</p>
               <p className="worker-rate">LKR 2,800/day</p>
               <p className="worker-description">Fast, efficient, and detail-oriented.</p>
-              <div className="worker-rating">★★★★★</div>
+              <div className="worker-rating">
+                {[...Array(5)].map((_, i) => (
+                  <AiFillStar key={i} color="#f2c94c" size={22} />
+                ))}
+              </div>
               <button className="worker-btn">View Profile</button>
             </div>
 
@@ -113,10 +130,15 @@ const HomePage = () => {
               <p className="worker-location">Galle</p>
               <p className="worker-rate">LKR 4,000/day</p>
               <p className="worker-description">Plumber with 10+ years of experience.</p>
-              <div className="worker-rating">★★★★★</div>
+              <div className="worker-rating">
+                {[...Array(5)].map((_, i) => (
+                  <AiFillStar key={i} color="#f2c94c" size={22} />
+                ))}
+              </div>
               <button className="worker-btn">View Profile</button>
             </div>
           </div>
+           <button className="view-all-btn">See All Workers</button>
         </div>
       </section>
 
@@ -187,16 +209,30 @@ const HomePage = () => {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-container">
+          {/* Company Info */}
           <div className="footer-section company-info">
             <div className="footer-logo-container">
               <img src={logo} alt="Logo" className="logo" />
             </div>
-            <p className="footer-text">"Your Trusted Property Partner"</p>
+            <p className="footer-text">Your Trusted Property Partner</p>
             <p className="footer-text">Connecting buyers and sellers with ease and transparency.</p>
             <div className="social-icons">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon">
+                <FaFacebookF />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon">
+                <FaTwitter />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon">
+                <FaInstagram />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon">
+                <FaLinkedinIn />
+              </a>
             </div>
           </div>
 
+          {/* Quick Links */}
           <div className="footer-section quick-links">
             <h3>Quick Links</h3>
             <ul>
@@ -208,6 +244,7 @@ const HomePage = () => {
             </ul>
           </div>
 
+          {/* Helpful Resources */}
           <div className="footer-section helpful-resources">
             <h3>Helpful Resources</h3>
             <ul>
@@ -219,6 +256,7 @@ const HomePage = () => {
             </ul>
           </div>
 
+          {/* Contact Info */}
           <div className="footer-section contact-info">
             <h3>Contact Info</h3>
             <p>Email: info@lms.com</p>
@@ -231,6 +269,7 @@ const HomePage = () => {
           <p>© {new Date().getFullYear()} LaborLink. All rights reserved.</p>
         </div>
       </footer>
+
     </div>
   );
 };

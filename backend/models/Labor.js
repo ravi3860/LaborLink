@@ -5,7 +5,6 @@ const laborSchema = new mongoose.Schema({
         type: String,   
         required: true
     },
-
     username: {
         type: String,   
         required: true,
@@ -34,17 +33,55 @@ const laborSchema = new mongoose.Schema({
     },
 
     ageCategory: { 
-    type: String, 
-    required: true,
-    enum: ['Young Adults', 'Adults', 'Middle-aged Workers', 'Senior Workers']
+        type: String, 
+        required: true,
+        enum: ['Young Adults', 'Adults', 'Middle-aged Workers', 'Senior Workers']
+    },
+    
+    skillCategory: { 
+        type: String, 
+        required: true,
+        enum: ['Masons', 'Electricians', 'Plumbers', 'Painters', 'Carpenters', 'Tile Layers', 'Welders', 'Roofers', 'Helpers/General Labourers', 'Scaffolders']
     },
 
-    skillCategory: { 
-    type: String, 
-    required: true,
-    enum: ['Masons', 'Electricians', 'Plumbers', 'Painters', 'Carpenters', 'Tile Layers', 'Welders', 'Roofers', 'Helpers/General Labourers', 'Scaffolders']
+     description: {   
+        type: String,
+        required: false,
+        maxlength: 500
+    },
+
+    yearsOfExperience: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    projects: [
+        {
+            projectName: 
+            { 
+                type: String, 
+                required: false 
+            },
+
+            description: 
+            { 
+                type: String, 
+                required: false 
+            }
+        }
+    ],
+
+    paymentType: {
+        type: String,
+        enum: ['Hourly', 'Daily'],
+        required: false
+    },
+
+    paymentRate: {
+        type: Number,
+        required: false
     }
-    
+
 });
 
 module.exports = mongoose.model('Labor', laborSchema);

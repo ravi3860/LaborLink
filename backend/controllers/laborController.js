@@ -1,4 +1,4 @@
-const Labor = require('../models/Labor');
+const Labor = require('../models/Labor'); 
 const bcrypt = require('bcrypt');
 
 // ✅ Register a labor
@@ -12,7 +12,12 @@ const registerLabor = async (req, res) => {
       address,
       phone,
       ageCategory,
-      skillCategory
+      skillCategory,
+      description,
+      yearsOfExperience,
+      projects,
+      paymentType,
+      paymentRate,
     } = req.body;
 
     // Validate required fields
@@ -24,9 +29,12 @@ const registerLabor = async (req, res) => {
       !address ||
       !phone ||
       !ageCategory ||
-      !skillCategory
+      !skillCategory ||
+      !description  ||
+      !paymentType ||
+      !paymentRate
     ) {
-      return res.status(400).json({ error: 'All fields are required' });
+      return res.status(400).json({ error: 'All required fields must be filled' });
     }
 
     // Check if username already exists
@@ -47,7 +55,12 @@ const registerLabor = async (req, res) => {
       address,
       phone,
       ageCategory,
-      skillCategory
+      skillCategory,
+      description: description || '',
+      yearsOfExperience: yearsOfExperience || 0,
+      projects: projects || [], 
+      paymentType: paymentType || '',
+      paymentRate: paymentRate || 0
     });
 
     await newLabor.save();
@@ -65,7 +78,6 @@ const getLaborDashboardData = async (req, res) => {
   try {
     const laborId = req.user.id;
 
-    // Fetch the logged-in labor's details (optional)
     const labor = await Labor.findById(laborId).select('-password'); // exclude password
 
     if (!labor) {
@@ -85,12 +97,41 @@ const getLaborDashboardData = async (req, res) => {
 // PUT /api/labors/update
 const updateLabor = async (req, res) => {
   try {
-    const { _id, name, email, username, address, phone, ageCategory, skillCategory } = req.body;
+    const {
+      _id,
+      name,
+      email,
+      username,
+      address,
+      phone,
+      ageCategory,
+      skillCategory,
+      yearsOfExperience,
+      projects,
+      paymentType,
+      paymentRate,
+      description
+    } = req.body;
+
     const updatedLabor = await Labor.findByIdAndUpdate(
       _id,
-      { name, email, username, address, phone, ageCategory, skillCategory },
+      {
+        name,
+        email,
+        username,
+        address,
+        phone,
+        ageCategory,
+        skillCategory,
+        description: description || '',
+        yearsOfExperience: yearsOfExperience || 0,
+        projects: projects || [],
+        paymentType: paymentType || '',
+        paymentRate: paymentRate || 0
+      },
       { new: true }
     );
+
     res.json({ success: true, updatedLabor });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to update details' });

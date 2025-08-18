@@ -138,6 +138,22 @@ body {
   font-weight: 800;
   color: var(--primary-color);
 }
+.cusdash-stat-value {
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+  letter-spacing: 0.3px;
+}
+
+.cusdash-stat-date {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-color);
+  opacity: 0.85;
+}
+
 
 /* ====== PROFILE TABS ====== */
 .cusdash-profile-tabs {

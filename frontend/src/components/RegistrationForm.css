@@ -1,10 +1,12 @@
+/* ------------------- Existing Registration Form Styles ------------------- */
+
 .registration-wrapper {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; 
   background: url('../pages/bgimg2.jpg') no-repeat center/cover;
-  padding: 40px 20px;
+  padding: 100px 20px 40px;
 }
 
 .rg-shadow-box {
@@ -49,7 +51,7 @@
 .rg-input-group input,
 .rg-input-group select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 14px 16px 14px 40px; /* padding-left to fit icon */
   border: 1.5px solid #ccc;
   border-radius: 12px;
   font-size: 1rem;
@@ -106,34 +108,14 @@
   text-decoration: underline;
 }
 
-.rg-input-group {
-  position: relative;
-}
-
 .input-icon {
   position: absolute;
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #5f2c82;
-  font-size: 1rem;
-}
-
-.rg-input-group input,
-.rg-input-group select {
-  width: 100%;
-  padding: 14px 16px 14px 40px; /* padding-left to fit icon */
-  border: 1.5px solid #ccc;
-  border-radius: 12px;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s ease;
-}
-
-.rg-input-group input:focus,
-.rg-input-group select:focus {
-  border-color: #5f2c82;
-  box-shadow: 0 0 8px rgba(95, 44, 130, 0.3);
+  font-size: 1.2rem; /* slightly bigger if needed */
+  pointer-events: none; /* allows click inside input */
 }
 
 .select-group {
@@ -177,4 +159,164 @@
 .select-card span {
   font-size: 0.95rem;
   color: #333;
+}
+
+/* ------------------- Redesigned New Labor Fields ------------------- */
+
+/* Container for new labor fields */
+.labor-extra-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Two-column layout for experience & payment */
+.labor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.labor-grid .rg-input-group {
+  width: 100%;
+}
+
+/* Input & select styling */
+.rg-input-group input,
+.rg-input-group select,
+.rg-input-group textarea {
+  width: 100%;
+  padding: 14px 16px 14px 42px;
+  border: 1.5px solid #ccc;
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.rg-input-group input:focus,
+.rg-input-group select:focus,
+.rg-input-group textarea:focus {
+  border-color: #5f2c82;
+  box-shadow: 0 0 10px rgba(95, 44, 130, 0.3);
+}
+
+/* Payment Type select dropdown */
+.rg-input-group select[name="paymentType"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fff url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><polygon points='6,9 12,15 18,9' style='fill:%23666;'/></svg>") no-repeat right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/* Self-description textarea */
+.rg-input-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Projects Section */
+.projects-section {
+  background: #f9f6ff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(95, 44, 130, 0.1);
+}
+
+.projects-section h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #5f2c82;
+}
+
+/* Project card input group */
+.project-input-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.project-input-group input {
+  flex: 1 1 45%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.project-input-group input:focus {
+  border-color: #5f2c82;
+  box-shadow: 0 0 8px rgba(95, 44, 130, 0.2);
+}
+
+/* Remove button */
+.project-input-group button {
+  background: linear-gradient(135deg, #5f2c82, #49a09d);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  height: 42px;
+}
+
+.project-input-group button:hover {
+  background: linear-gradient(135deg, #6a1b9a, #3b82f6);
+  transform: scale(1.05);
+}
+
+/* Add Project Button */
+.projects-section > button {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #fff, #e6e0f8);
+  border: 2px dashed #5f2c82;
+  color: #5f2c82;
+  padding: 12px 0;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.projects-section > button:hover {
+  background: linear-gradient(135deg, #5f2c82, #49a09d);
+  color: #fff;
+  transform: scale(1.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .labor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-input-group {
+    flex-direction: column;
+  }
+
+  .project-input-group input {
+    flex: 1 1 100%;
+  }
+
+  .projects-section > button {
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .rg-input-group input,
+  .rg-input-group select,
+  .rg-input-group textarea {
+    padding-left: 40px; 
+  }
 }

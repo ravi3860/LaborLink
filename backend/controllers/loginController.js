@@ -26,14 +26,28 @@ const loginUser = async (req, res) => {
   try {
     let user;
 
+    // Fetch user based on role
     if (role === 'Customer') {
       user = await Customer.findOne({ username });
-      if (!user) return res.status(404).json({ error: 'Customer not found' });
+    } else if (role === 'Labor') {
+      user = await Labor.findOne({ username });
+    } else if (role === 'Admin') {
+      user = await Admin.findOne({ username });
+    } else {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ error: 'Incorrect password' });
+    if (!user) return res.status(404).json({ error: `${role} not found` });
 
-      // Only send verification code if 2-step is enabled
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ error: 'Incorrect password' });
+
+    // If Customer, handle 2-step verification
+    if (role === 'Customer') {
+      user.lastLogin = new Date();
+      await user.save();
+
       if (user.twoStepEnabled) {
         const code = generateVerificationCode();
         const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
@@ -58,7 +72,7 @@ const loginUser = async (req, res) => {
         });
       }
 
-      // 2-step disabled → issue JWT directly
+      // 2-step disabled → issue JWT
       const payload = { id: user._id, username: user.username, role: 'Customer' };
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
 
@@ -74,8 +88,8 @@ const loginUser = async (req, res) => {
         twoStepEnabled: false,
       });
     }
-    
-    // For Labor and Admin (no 2-step verification)
+
+    // For Labor and Admin (no 2-step)
     const payload = {
       id: user._id,
       username: user.username,
@@ -100,5 +114,5 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = {
-  loginUser
+  loginUser,
 };

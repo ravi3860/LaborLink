@@ -18,6 +18,7 @@ import {
   FaLock,
   FaHistory,
 } from 'react-icons/fa';
+import { format } from "date-fns";
 
 const CustomerDashboard = () => {
   const [customerData, setCustomerData] = useState(null);
@@ -96,6 +97,12 @@ const CustomerDashboard = () => {
     }
   };
 
+  function formatLastLogin(dateString) {
+  if (!dateString) return "No login record";
+  const date = new Date(dateString);
+  return format(date, "EEEE, MMMM d, yyyy • hh:mm a");
+}
+
   if (!customerData) return <p className="cusdash-loading-text">Loading dashboard...</p>;
 
   const today = new Date().toLocaleDateString(undefined, {
@@ -163,12 +170,17 @@ const CustomerDashboard = () => {
             <div className="cusdash-stat-value">{customerData.subscriptions?.length || 0}</div>
           </div>
           <div className="cusdash-stat-card">
-            <div className="cusdash-stat-top">
-              <FaChartLine className="cusdash-stat-icon" />
-              <span className="cusdash-stat-title">Last Login</span>
-            </div>
-            <div className="cusdash-stat-value">{customerData.lastLogin || 'N/A'}</div>
+          <div className="cusdash-stat-top">
+            <FaChartLine className="cusdash-stat-icon" />
+            <span className="cusdash-stat-title">Last Login</span>
           </div>
+          <p className="cusdash-stat-value">
+            {formatLastLogin(customerData.lastLogin)}
+          </p>
+          <p className="cusdash-stat-date">
+            Local Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+          </p>
+        </div>
         </div>
 
         {activeTab === 'profile' && (

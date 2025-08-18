@@ -24,6 +24,7 @@ const LaborDashboard = () => {
   const [formData, setFormData] = useState({});
   const [activeTab, setActiveTab] = useState('profile');
   const [profileTab, setProfileTab] = useState('overview');
+  const [projects, setProjects] = useState(formData.projects || []);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -51,20 +52,38 @@ const LaborDashboard = () => {
   };
 
   const handleUpdate = async () => {
-    try {
-      const response = await updateLabor(formData);
-      Swal.fire('Details updated successfully!');
-      setLaborData(response.data.updatedLabor);
-    } catch (error) {
-      console.error('Update failed:', error);
-      Swal.fire('Failed to update details.');
-    }
-  };
+  try {
+    const response = await updateLabor({ ...formData, projects });
+    Swal.fire('Details updated successfully!');
+    setLaborData(response.data.updatedLabor);
+  } catch (error) {
+    console.error('Update failed:', error);
+    Swal.fire('Failed to update details.');
+  }
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleUpdate();
+    handleUpdate({ ...formData, projects });
   };
+
+  const addProject = () => {
+    setProjects([...projects, { name: '', description: '' }]);
+  };
+
+  const removeProject = (index) => {
+    const updatedProjects = projects.filter((_, idx) => idx !== index);
+    setProjects(updatedProjects);
+  };
+
+  const handleProjectChange = (index, field, value) => {
+  const updatedProjects = [...projects];
+  updatedProjects[index][field] = value;
+  setProjects(updatedProjects);
+};
+
+
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
@@ -187,11 +206,9 @@ const LaborDashboard = () => {
               </button>
             </div>
 
-            {/* Dashboard Content */}
-              {/* Overview */}
-              
-              {profileTab === 'overview' && (
-                <>
+            {/* Overview */}
+            {profileTab === 'overview' && (
+              <>
                 <div className="labor-dashboard-grid">
                   <div className="labor-profile-overview">
                     <div className="labor-profile-header">
@@ -219,9 +236,39 @@ const LaborDashboard = () => {
                       <p><strong>Age Category:</strong> {laborData.ageCategory}</p>
                       <p><strong>Skill Category:</strong> {laborData.skillCategory}</p>
                     </div>
+
+                    <div className="labor-profile-section-card">
+                      <h4>About Me</h4>
+                      <p>{laborData.description || "No description provided."}</p>
+                    </div>
+
+                    <div className="labor-profile-section-card">
+                      <h4>Experience</h4>
+                      <p>{laborData.experience ? `${laborData.experience} years` : "Not specified"}</p>
+                    </div>
+
+                    <div className="labor-profile-section-card">
+                      <h4>Payment Details</h4>
+                      <p><strong>Type:</strong> {laborData.paymentType || "N/A"}</p>
+                      <p><strong>Rate:</strong> {laborData.paymentRate ? `$${laborData.paymentRate}` : "N/A"}</p>
+                    </div>
+
+                    <div className="labor-profile-section-card">
+                    <h4>Projects</h4>
+                    {projects.length > 0 ? (
+                      <ul>
+                        {projects.map((proj, idx) => (
+                          <li key={idx}>
+                            <strong>{proj.name}:</strong> {proj.description}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No projects added yet.</p>
+                    )}
                   </div>
-                   
-                  
+                  </div>
+
                   <div className="labor-activity-timeline">
                     <h3>Recent Activity</h3>
                     {laborData.activity?.length > 0 ? (
@@ -240,87 +287,183 @@ const LaborDashboard = () => {
                       <p className="labor-empty-state">No recent activity</p>
                     )}
                   </div>
-                  </div> 
-                </>
-              )}
+                </div>
+              </>
+            )}
 
-              {/* Edit Profile */}
-              {profileTab === 'edit' && (
-                <div className="labor-profile-update-form">
-                  <div className="labor-card-head">
-                    <h3 className="labor-card-title">Update Your Details</h3>
-                    <p className="labor-card-subtitle">Keep your account information up to date.</p>
+            {/* Edit Profile */}
+            {profileTab === 'edit' && (
+              <div className="labor-profile-update-form">
+                <div className="labor-card-head">
+                  <h3 className="labor-card-title">Update Your Details</h3>
+                  <p className="labor-card-subtitle">Keep your account information up to date.</p>
+                </div>
+
+                <form className="labor-form" onSubmit={handleSubmit}>
+                  {[
+                    { field: 'name', label: 'Full Name', placeholder: 'Enter full name' },
+                    { field: 'username', label: 'Username', placeholder: 'Choose a username' },
+                    { field: 'email', label: 'Email', placeholder: 'name@example.com' },
+                    { field: 'phone', label: 'Phone', placeholder: '+1 555 000 0000' },
+                    { field: 'address', label: 'Address', placeholder: 'Street, City, State' }
+                  ].map(({ field, label, placeholder }) => (
+                    <div className="labor-input-group" key={field}>
+                      <label htmlFor={field}>{label}</label>
+                      <input
+                        id={field}
+                        name={field}
+                        type={field === 'email' ? 'email' : 'text'}
+                        value={formData[field] || ''}
+                        onChange={handleChange}
+                        placeholder={placeholder}
+                        required
+                      />
+                    </div>
+                  ))}
+
+                  {/* Age Category */}
+                  <div className="labor-input-group">
+                    <label htmlFor="ageCategory">Age Category</label>
+                    <select
+                      id="ageCategory"
+                      name="ageCategory"
+                      value={formData.ageCategory || ''}
+                      onChange={handleChange}
+                      className="labor-select"
+                      required
+                    >
+                      <option value="">Select Age Category</option>
+                      <option value="Young Adults">Young Adults (18–25)</option>
+                      <option value="Adults">Adults (26–35)</option>
+                      <option value="Middle-aged Workers">Middle-aged Workers (36–50)</option>
+                      <option value="Senior Workers">Senior Workers (51+)</option>
+                    </select>
                   </div>
 
-                  <form className="labor-form" onSubmit={handleSubmit}>
-                    {/* All inputs full width */}
-                    {[
-                      { field: 'name', label: 'Full Name', placeholder: 'Enter full name', hint: 'This will be displayed on bookings.' },
-                      { field: 'username', label: 'Username', placeholder: 'Choose a username', hint: 'Use 4–20 characters.' },
-                      { field: 'email', label: 'Email', placeholder: 'name@example.com', hint: 'We’ll send confirmations here.' },
-                      { field: 'phone', label: 'Phone', placeholder: '+1 555 000 0000', hint: 'Add country code if applicable.' },
-                      { field: 'address', label: 'Address', placeholder: 'Street, City, State', hint: 'Used for receipts and service visits.' }
-                    ].map(({ field, label, placeholder, hint }) => (
-                      <div className="labor-input-group" key={field}>
-                        <label htmlFor={field}>{label}</label>
-                        <input
-                          id={field}
-                          name={field}
-                          type={field === 'email' ? 'email' : 'text'}
-                          value={formData[field] || ''}
-                          onChange={handleChange}
-                          required
-                          placeholder={placeholder}
-                        />
-                        {hint && <small className="labor-input-hint">{hint}</small>}
-                      </div>
-                    ))}
+                  {/* Skill Category */}
+                  <div className="labor-input-group">
+                    <label htmlFor="skillCategory">Skill Category</label>
+                    <select
+                      id="skillCategory"
+                      name="skillCategory"
+                      value={formData.skillCategory || ''}
+                      onChange={handleChange}
+                      className="labor-select"
+                      required
+                    >
+                      <option value="">Select Skill Category</option>
+                      <option value="Masons">Masons</option>
+                      <option value="Electricians">Electricians</option>
+                      <option value="Plumbers">Plumbers</option>
+                      <option value="Painters">Painters</option>
+                      <option value="Carpenters">Carpenters</option>
+                      <option value="Tile Layers">Tile Layers</option>
+                      <option value="Welders">Welders</option>
+                      <option value="Roofers">Roofers</option>
+                      <option value="Helpers/General Labourers">Helpers/General Labourers</option>
+                      <option value="Scaffolders">Scaffolders</option>
+                    </select>
+                  </div>
 
-                    {/* Age Category */}
-                    <div className="labor-input-group">
-                      <label htmlFor="ageCategory">Age Category</label>
-                      <select
-                        id="ageCategory"
-                        name="ageCategory"
-                        value={formData.ageCategory || ''}
-                        onChange={handleChange}
-                        className="labor-select"
+                {/* About Me */}
+                <div className="cus-profile-group">
+                  <label htmlFor="aboutMe" className="cus-label">About Me</label>
+                  <textarea
+                    id="aboutMe"
+                    name="aboutMe"
+                    value={formData.description || ''}
+                    onChange={handleChange}
+                    placeholder="Write a short description about yourself"
+                    rows="4"
+                    className="cus-textarea"
+                  />
+                </div>
+
+                {/* Experience */}
+                <div className="cus-profile-group">
+                  <label htmlFor="experienceYears" className="cus-label">Experience (in years)</label>
+                  <input
+                    id="experienceYears"
+                    name="experienceYears"
+                    type="number"
+                    value={formData.experience || ''}
+                    onChange={handleChange}
+                    placeholder="e.g., 5"
+                    className="cus-input"
+                  />
+                </div>
+
+                {/* Payment Type */}
+                <div className="cus-profile-group">
+                  <label htmlFor="paymentOption" className="cus-label">Payment Type</label>
+                  <select
+                    id="paymentOption"
+                    name="paymentOption"
+                    value={formData.paymentType || ''}
+                    onChange={handleChange}
+                    className="cus-select"
+                  >
+                    <option value="">Select Payment Type</option>
+                    <option value="Hourly">Hourly</option>
+                    <option value="Daily">Daily</option>
+                  </select>
+                </div>
+
+                {/* Payment Rate */}
+                <div className="cus-profile-group">
+                  <label htmlFor="paymentRate" className="cus-label">Payment Rate ($) <span className="cus-required">*</span></label>
+                  <input
+                    id="paymentRate"
+                    name="paymentRate"
+                    type="number"
+                    value={formData.paymentRate || ''}
+                    onChange={handleChange}
+                    placeholder="e.g., 20"
+                    className="cus-input"
+                    required
+                    min="0"
+                  />
+                </div>
+
+                {/* Projects Section */}
+                <div className="cus-profile-group">
+                  <label className="cus-label">Projects</label>
+                  {projects.map((proj, idx) => (
+                    <div key={idx} className="cus-project-row">
+                      <input
+                        type="text"
+                        placeholder="Project Name"
+                        value={proj.name}
+                        onChange={(e) => handleProjectChange(idx, 'name', e.target.value)}
+                        className="cus-input"
                         required
-                      >
-                        <option value="">Select Age Category</option>
-                        <option value="Young Adults">Young Adults (18–25)</option>
-                        <option value="Adults">Adults (26–35)</option>
-                        <option value="Middle-aged Workers">Middle-aged Workers (36–50)</option>
-                        <option value="Senior Workers">Senior Workers (51+)</option>
-                      </select>
-                    </div>
-
-                    {/* Skill Category */}
-                    <div className="labor-input-group">
-                      <label htmlFor="skillCategory">Skill Category</label>
-                      <select
-                        id="skillCategory"
-                        name="skillCategory"
-                        value={formData.skillCategory || ''}
-                        onChange={handleChange}
-                        className="labor-select"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Project Description"
+                        value={proj.description}
+                        onChange={(e) => handleProjectChange(idx, 'description', e.target.value)}
+                        className="cus-input"
                         required
+                      />
+                      <button
+                        type="button"
+                        className="cus-btn-remove"
+                        onClick={() => removeProject(idx)}
                       >
-                        <option value="">Select Skill Category</option>
-                        <option value="Masons">Masons</option>
-                        <option value="Electricians">Electricians</option>
-                        <option value="Plumbers">Plumbers</option>
-                        <option value="Painters">Painters</option>
-                        <option value="Carpenters">Carpenters</option>
-                        <option value="Tile Layers">Tile Layers</option>
-                        <option value="Welders">Welders</option>
-                        <option value="Roofers">Roofers</option>
-                        <option value="Helpers/General Labourers">Helpers/General Labourers</option>
-                        <option value="Scaffolders">Scaffolders</option>
-                      </select>
+                        Remove
+                      </button>
                     </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="cus-btn-add"
+                    onClick={addProject}
+                  >
+                    + Add Project
+                  </button>
 
-                    {/* Buttons */}
+                 {/* Buttons */}
                     <div className="labor-button-row">
                       <button type="submit" className="labor-btn labor-btn-primary">
                         Save Changes
@@ -329,25 +472,26 @@ const LaborDashboard = () => {
                         Delete Account
                       </button>
                     </div>
-                  </form>
                 </div>
-              )}
+                </form>
+              </div>
+            )}
 
-              {/* Security */}
-              {profileTab === 'security' && (
-                <div className="labor-profile-section-card">
-                  <h3>Security Settings</h3>
-                  <p>Password change & 2FA options will appear here.</p>
-                </div>
-              )}
+            {/* Security */}
+            {profileTab === 'security' && (
+              <div className="labor-profile-section-card">
+                <h3>Security Settings</h3>
+                <p>Password change & 2FA options will appear here.</p>
+              </div>
+            )}
 
-              {/* Activity */}
-              {profileTab === 'activity' && (
-                <div className="labor-profile-section-card">
-                  <h3>Activity Log</h3>
-                  <p>No recent activity.</p>
-                </div>
-              )}
+            {/* Activity */}
+            {profileTab === 'activity' && (
+              <div className="labor-profile-section-card">
+                <h3>Activity Log</h3>
+                <p>No recent activity.</p>
+              </div>
+            )}
           </>
         )}
 

@@ -40,7 +40,11 @@ const CustomerSchema = new mongoose.Schema({
     twoStepEnabled: {
         type: Boolean,
         default: false  // initially disabled
-    }
+    },
+    lastLogin: { 
+        type: Date, 
+        default: null 
+    },
 });
 
 module.exports = mongoose.model('Customer', CustomerSchema);
