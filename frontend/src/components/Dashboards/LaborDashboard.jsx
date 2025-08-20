@@ -16,7 +16,10 @@ import {
   FaPhone,
   FaMapMarkerAlt,
   FaIdBadge,
+  FaClock,
+  FaCalendarDay
 } from 'react-icons/fa';
+import { FaUserAlt, FaBriefcase, FaMoneyBillWave, FaDollarSign, FaTasks, FaTrashAlt, FaPlus } from "react-icons/fa";
 import './LaborDashboard.css';
 
 const LaborDashboard = () => {
@@ -367,7 +370,9 @@ const LaborDashboard = () => {
 
                 {/* About Me */}
                 <div className="cus-profile-group">
-                  <label htmlFor="aboutMe" className="cus-label">About Me</label>
+                  <label htmlFor="aboutMe" className="cus-label">
+                    <FaUserAlt className="cus-icon" /> About Me
+                  </label>
                   <textarea
                     id="aboutMe"
                     name="aboutMe"
@@ -381,7 +386,9 @@ const LaborDashboard = () => {
 
                 {/* Experience */}
                 <div className="cus-profile-group">
-                  <label htmlFor="experienceYears" className="cus-label">Experience (in years)</label>
+                  <label htmlFor="experienceYears" className="cus-label">
+                    <FaBriefcase className="cus-icon" /> Experience (in years)
+                  </label>
                   <input
                     id="experienceYears"
                     name="experienceYears"
@@ -390,28 +397,40 @@ const LaborDashboard = () => {
                     onChange={handleChange}
                     placeholder="e.g., 5"
                     className="cus-input"
+                    min="0"
                   />
                 </div>
 
                 {/* Payment Type */}
-                <div className="cus-profile-group">
-                  <label htmlFor="paymentOption" className="cus-label">Payment Type</label>
-                  <select
-                    id="paymentOption"
-                    name="paymentOption"
-                    value={formData.paymentType || ''}
-                    onChange={handleChange}
-                    className="cus-select"
-                  >
-                    <option value="">Select Payment Type</option>
-                    <option value="Hourly">Hourly</option>
-                    <option value="Daily">Daily</option>
-                  </select>
-                </div>
+<div className="cus-profile-group">
+  <label className="cus-label">
+    <FaMoneyBillWave className="cus-icon" /> Payment Type
+  </label>
+  <div className="cus-payment-options">
+    <button
+      type="button"
+      className={`cus-payment-btn ${formData.paymentType === "Hourly" ? "active" : ""}`}
+      onClick={() => setFormData({ ...formData, paymentType: "Hourly" })}
+    >
+      <FaClock className="cus-payment-icon" />
+      Hourly
+    </button>
+    <button
+      type="button"
+      className={`cus-payment-btn ${formData.paymentType === "Daily" ? "active" : ""}`}
+      onClick={() => setFormData({ ...formData, paymentType: "Daily" })}
+    >
+      <FaCalendarDay className="cus-payment-icon" />
+      Daily
+    </button>
+  </div>
+</div>
 
                 {/* Payment Rate */}
                 <div className="cus-profile-group">
-                  <label htmlFor="paymentRate" className="cus-label">Payment Rate ($) <span className="cus-required">*</span></label>
+                  <label htmlFor="paymentRate" className="cus-label">
+                    <FaDollarSign className="cus-icon" /> Payment Rate ($) <span className="cus-required">*</span>
+                  </label>
                   <input
                     id="paymentRate"
                     name="paymentRate"
@@ -421,13 +440,15 @@ const LaborDashboard = () => {
                     placeholder="e.g., 20"
                     className="cus-input"
                     required
-                    min="0"
+                    min="1"
                   />
                 </div>
 
                 {/* Projects Section */}
                 <div className="cus-profile-group">
-                  <label className="cus-label">Projects</label>
+                  <label className="cus-label">
+                    <FaTasks className="cus-icon" /> Projects
+                  </label>
                   {projects.map((proj, idx) => (
                     <div key={idx} className="cus-project-row">
                       <input
@@ -451,7 +472,7 @@ const LaborDashboard = () => {
                         className="cus-btn-remove"
                         onClick={() => removeProject(idx)}
                       >
-                        Remove
+                        <FaTrashAlt /> Remove
                       </button>
                     </div>
                   ))}
@@ -460,9 +481,8 @@ const LaborDashboard = () => {
                     className="cus-btn-add"
                     onClick={addProject}
                   >
-                    + Add Project
+                    <FaPlus /> Add Project
                   </button>
-
                  {/* Buttons */}
                     <div className="labor-button-row">
                       <button type="submit" className="labor-btn labor-btn-primary">

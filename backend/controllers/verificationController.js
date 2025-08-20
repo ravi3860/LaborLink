@@ -84,11 +84,34 @@ const toggleTwoStepVerification = async (req, res) => {
       });
 
       await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: customer.email,
-        subject: 'Your 2-Step Verification Code',
-        text: `Your verification code is: ${code}`
-      });
+      from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+      to: customer.email,
+      subject: '🔐 Your Verification Code',
+      html: `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #eee;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #5e17eb, #8a4dff); padding: 20px; text-align: center;">
+          <img src="https://img.icons8.com/external-flatart-icons-flat-flatarticons/64/ffffff/external-security-web-security-flatart-icons-flat-flatarticons.png" alt="Security Icon" style="width: 60px; margin-bottom: 10px;" />
+          <h2 style="color: #fff; margin: 0;">Two-Step Verification</h2>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 25px; color: #333; text-align: center;">
+          <p style="font-size: 16px;">Hello <strong>${customer.username}</strong>,</p>
+          <p style="font-size: 15px;">Use the code below to complete your login:</p>
+          <div style="background: #f2f0ff; border: 2px dashed #5e17eb; border-radius: 10px; padding: 20px; margin: 20px 0;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #5e17eb;">${code}</span>
+          </div>
+          <p style="font-size: 14px; color: #777;">This code is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background: #fafafa; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+          © ${new Date().getFullYear()} LaborLink | Secure Access
+        </div>
+      </div>`
+    });
     } else {
       // If disabling, clear any existing code
       customer.verificationCode = undefined;

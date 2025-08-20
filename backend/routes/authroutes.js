@@ -17,6 +17,20 @@ const {
   toggleTwoStepVerification // import the new method
 } = require('../controllers/verificationController');
 
+const {
+  createBooking,
+  getBookingsByCustomer,
+  getBookingsByLabor,
+  updateBookingStatus,
+  deleteBooking
+} = require('../controllers/bookingController');
+
+const {
+  createPayment,
+  markPaymentPaid,
+  handleBookingDeclined
+} = require('../controllers/paymentController');
+
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Create a new router instance
@@ -73,5 +87,49 @@ router.get(
   authMiddleware.verifyAdmin, 
   require('../controllers/adminController').getDashboardData
 );
+
+// 📌 Create booking (customer)
+router.post(
+  '/bookings', 
+  authMiddleware.verifyCustomer, 
+  createBooking
+);
+
+// 📌 Get bookings for a customer
+router.get(
+  '/bookings/customer/:id', 
+  authMiddleware.verifyCustomer, 
+  getBookingsByCustomer
+);
+
+// 📌 Get bookings for a labor
+router.get(
+  '/bookings/labor/:id', 
+  authMiddleware.verifyLabor, 
+  getBookingsByLabor
+);
+
+// 📌 Update booking status (labor accepts/declines/completes)
+router.patch(
+  '/bookings/:id/status', 
+  authMiddleware.verifyLabor, 
+  updateBookingStatus
+);
+
+// 📌 Delete a booking (customer cancels)
+router.delete(
+  '/bookings/:id', 
+  authMiddleware.verifyCustomer, 
+  deleteBooking
+);
+
+router.post('/payments', 
+  authMiddleware.verifyCustomer, 
+  createPayment);
+
+// Mark payment as paid (Customer)
+router.patch('/payments/:paymentId/paid', 
+  authMiddleware.verifyCustomer, 
+  markPaymentPaid);
 
 module.exports = router;
