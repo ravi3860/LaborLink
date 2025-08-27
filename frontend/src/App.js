@@ -13,12 +13,16 @@ import LoginPage from './pages/LoginPage';
 import CustomerDashboard from './components/Dashboards/CustomerDashboard';
 import LaborDashboard from './components/Dashboards/LaborDashboard';
 import AdminDashboard from './components/Dashboards/AdminDashboard';
+import BookingForm from "./components/BookingForm";
 
 const ProtectedRoute = ({ children, role }) => {
   const { auth } = useAuth();
 
-  if (!auth.token) return <Navigate to="/login" />;
-  if (role && auth.role !== role) return <Navigate to="/" />;
+  // Debug logs
+  console.log("ProtectedRoute check:", auth);
+
+  if (!auth?.token) return <Navigate to="/login" replace />;
+  if (role && auth?.role !== role) return <Navigate to="/" replace />;
 
   return children;
 };
@@ -37,7 +41,7 @@ function App() {
           <Route path="/register/:role" element={<Register />} />
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected Routes */}
+          {/* Dashboards */}
           <Route
             path="/customer/dashboard"
             element={
@@ -59,6 +63,16 @@ function App() {
             element={
               <ProtectedRoute role="Admin">
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Booking Route */}
+          <Route
+            path="/bookings/labor/:id"
+            element={
+              <ProtectedRoute role="Customer">
+                <BookingForm />
               </ProtectedRoute>
             }
           />

@@ -84,6 +84,24 @@ export const getAdminDashboard = async () => {
   });
 };
 
+// ✅ Get bookings for a labor (uses /bookings/labor/:id)
+export const getBookingsForLabor = async (laborId) => {
+  const token = localStorage.getItem('token');
+  return await axios.get(`${BASE_URL}/bookings/labor/${laborId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+};
+
+// ✅ Update booking status (uses PATCH /bookings/:id/status)
+export const updateBookingStatus = async (bookingId, status, reason = '') => {
+  const token = localStorage.getItem('token');
+  return await axios.patch(
+    `${BASE_URL}/bookings/${bookingId}/status`,
+    { status, reason },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
 // Toggle 2-step verification (enable/disable)
 export const toggleTwoStepVerification = async (customerId, enable) => {
   const token = localStorage.getItem('token');

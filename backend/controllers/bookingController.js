@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 
 // Setup NodeMailer transporter
 const transporter = nodemailer.createTransport({
-    service: 'Gmail', // or your email service
+    service: 'Gmail', 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -127,11 +127,52 @@ const updateBookingStatus = async (req, res) => {
 
             // Send email to customer
             const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: booking.customerEmail,
-                subject: 'Your booking has been cancelled',
-                text: `Hello ${booking.customerName},\n\nYour booking with ${booking.laborId.name} has been cancelled.\nReason: ${booking.declineReason}\n\nThank you.`
+            from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+            to: booking.customerEmail,
+            subject: '❌ Your Booking Has Been Cancelled',
+            html: `
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+                <tr>
+                <td align="center">
+                    <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="background:#e63946; padding:30px;">
+                        <img src="https://img.icons8.com/ios-filled/80/ffffff/cancel.png" width="60" alt="Cancelled" style="display:block;" />
+                        <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">Booking Cancelled</h2>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:30px; color:#333333; text-align:left; font-size:15px;">
+                        <p>Hello <strong>${booking.customerName}</strong>,</p>
+                        <p>We regret to inform you that your booking with <b>${booking.laborId.name}</b> has been <span style="color:#e63946; font-weight:bold;">cancelled</span>.</p>
+                        
+                        <p><b>Reason:</b> ${booking.declineReason || 'No reason provided'} </p>
+
+                        <div style="background:#fff5f5; border-left:5px solid #e63946; padding:15px; margin:20px 0; border-radius:6px;">
+                            <p style="margin:0; font-size:14px;">We apologize for any inconvenience caused. You may book another labor through our platform at any time.</p>
+                        </div>
+                        
+                        <p style="margin-top:20px;">Thank you for using <b>LaborLink</b>.</p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                        © ${new Date().getFullYear()} LaborLink | Booking Notifications
+                        </td>
+                    </tr>
+                    </table>
+                </td>
+                </tr>
+            </table>
+            `
             };
+
             transporter.sendMail(mailOptions, (err, info) => {
                 if (err) console.error('Email error:', err);
                 else console.log('Decline email sent:', info.response);

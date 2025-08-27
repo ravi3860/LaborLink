@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const laborSchema = new mongoose.Schema({
+    profileImage: {
+        type: String, 
+        default: ""
+    },
     name: {
         type: String,   
         required: true
@@ -44,7 +48,7 @@ const laborSchema = new mongoose.Schema({
         enum: ['Masons', 'Electricians', 'Plumbers', 'Painters', 'Carpenters', 'Tile Layers', 'Welders', 'Roofers', 'Helpers/General Labourers', 'Scaffolders']
     },
 
-     description: {   
+    description: {   
         type: String,
         required: false,
         maxlength: 500

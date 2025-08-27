@@ -1,3 +1,4 @@
+const upload = require("../middleware/upload"); 
 const express = require('express');
 const { 
   registerCustomer,
@@ -7,7 +8,10 @@ const {
 const { 
   registerLabor,
   updateLabor,
-  deleteLabor
+  deleteLabor,
+  getAllServices,
+  getLaborsByService,
+  uploadLaborProfileImage
 } = require('../controllers/laborController');
 
 const { loginUser } = require('../controllers/loginController');
@@ -32,6 +36,7 @@ const {
 } = require('../controllers/paymentController');
 
 const authMiddleware = require('../middleware/authMiddleware');
+const validateBooking = require("../middleware/bookingValidation");
 
 // Create a new router instance
 const router = express.Router();
@@ -53,6 +58,12 @@ router.put('/labors/update', updateLabor);
 
 // Route for deleting a labor
 router.delete('/labors/delete/:id', deleteLabor);
+
+// GET all services
+router.get('/services', getAllServices);
+
+// GET labors by service
+router.get('/labors/service/:skillCategory', getLaborsByService);
 
 // POST /api/login
 router.post('/login', loginUser);
@@ -92,6 +103,7 @@ router.get(
 router.post(
   '/bookings', 
   authMiddleware.verifyCustomer, 
+  validateBooking,
   createBooking
 );
 
@@ -131,5 +143,12 @@ router.post('/payments',
 router.patch('/payments/:paymentId/paid', 
   authMiddleware.verifyCustomer, 
   markPaymentPaid);
+
+router.post(
+  "/labors/:id/upload-profile",
+  authMiddleware.verifyLabor,
+  upload.single("profileImage"),
+  uploadLaborProfileImage
+);
 
 module.exports = router;

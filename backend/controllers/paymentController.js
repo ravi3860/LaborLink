@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
 });
 
 // 📌 Create payment after labor accepts booking
-// 📌 Create payment after labor accepts booking
 const createPayment = async (req, res) => {
     try {
         const { bookingId, duration, paymentMethod, cardDetails } = req.body;
@@ -67,12 +66,56 @@ const createPayment = async (req, res) => {
 
         // Send email notification
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: booking.customerId.email,
-            subject: `Payment ${payment.status === 'paid' ? 'Successful' : 'Pending'}`,
-            html: `<p>Your payment of LKR ${payment.totalAmount} for booking has been ${payment.status}.</p>
-                   <p>Booking status: <strong>${booking.status}</strong></p>`
+        from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+        to: booking.customerId.email,
+        subject: payment.status === 'paid' ? '✅ Payment Successful' : '⏳ Payment Pending',
+        html: `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+            <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+                
+                <!-- Header -->
+                <tr>
+                    <td align="center" style="background:${payment.status === 'paid' ? '#2d6a4f' : '#ffb703'}; padding:30px;">
+                    <img src="${payment.status === 'paid' ? 'https://img.icons8.com/ios-filled/80/ffffff/money.png' : 'https://img.icons8.com/ios-filled/80/ffffff/wallet.png'}" width="60" alt="Icon" style="display:block;" />
+                    <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">
+                        ${payment.status === 'paid' ? 'Payment Successful' : 'Payment Pending'}
+                    </h2>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:30px; color:#333333; font-size:15px;">
+                    <p>Hello <strong>${booking.customerId.name}</strong>,</p>
+                    <p>Your payment of <b>LKR ${payment.totalAmount}</b> for this booking has been <strong>${payment.status}</strong>.</p>
+
+                    <div style="background:#f0fff4; border-left:5px solid #2d6a4f; padding:15px; margin:20px 0; border-radius:6px;">
+                        <p style="margin:0; font-size:14px;"><b>Booking Status:</b> ${booking.status}</p>
+                        <p style="margin:0; font-size:14px;"><b>Payment Method:</b> ${payment.paymentMethod}</p>
+                    </div>
+
+                    <p>Thank you for choosing <b>LaborLink</b>.</p>
+
+                    ${payment.status !== 'paid' ? `<a href="https://your-payment-link.com" style="display:inline-block; margin:20px 0; padding:12px 24px; background:#ff6f00; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;">Pay Now</a>` : ''}
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                    © ${new Date().getFullYear()} LaborLink | Payment Notifications
+                    </td>
+                </tr>
+
+                </table>
+            </td>
+            </tr>
+        </table>
+        `
         });
+
 
         res.status(201).json({ message: 'Payment record created', payment, booking });
     } catch (error) {
@@ -114,12 +157,52 @@ const markPaymentPaid = async (req, res) => {
         }
 
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: payment.customerId.email,
-            subject: 'Payment Successful',
-            html: `<p>Your payment of LKR ${payment.totalAmount} for booking has been received successfully.</p>
-                   <p>Booking is now <strong>${booking.status}</strong>.</p>`
+        from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+        to: payment.customerId.email,
+        subject: '✅ Payment Successful',
+        html: `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+            <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+                
+                <!-- Header -->
+                <tr>
+                    <td align="center" style="background:#2d6a4f; padding:30px;">
+                    <img src="https://img.icons8.com/ios-filled/80/ffffff/money.png" width="60" alt="Paid" style="display:block;" />
+                    <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">Payment Successful</h2>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:30px; color:#333333; font-size:15px;">
+                    <p>Hello <strong>${payment.customerId.name}</strong>,</p>
+                    <p>Your payment of <b>LKR ${payment.totalAmount}</b> for your booking has been <strong>successfully received</strong>.</p>
+
+                    <div style="background:#f0fff4; border-left:5px solid #2d6a4f; padding:15px; margin:20px 0; border-radius:6px;">
+                        <p style="margin:0; font-size:14px;"><b>Booking Status:</b> ${booking.status}</p>
+                        <p style="margin:0; font-size:14px;"><b>Payment Method:</b> ${payment.paymentMethod}</p>
+                    </div>
+
+                    <p>Thank you for choosing <b>LaborLink</b>. Your labor will begin work shortly.</p>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                    © ${new Date().getFullYear()} LaborLink | Payment Notifications
+                    </td>
+                </tr>
+
+                </table>
+            </td>
+            </tr>
+        </table>
+        `
         });
+
 
         res.status(200).json({ message: 'Payment marked as paid', payment, booking });
     } catch (error) {
@@ -147,12 +230,52 @@ const handleBookingDeclined = async (bookingId, reason = 'No reason provided') =
 
         // Send email to customer
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: booking.customerId.email,
-            subject: 'Booking Cancelled',
-            html: `<p>Your booking has been cancelled by the labor.</p>
-                   <p>Reason: ${reason}</p>`
+        from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+        to: booking.customerId.email,
+        subject: '❌ Booking Cancelled',
+        html: `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+            <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+                
+                <!-- Header -->
+                <tr>
+                    <td align="center" style="background:#e63946; padding:30px;">
+                    <img src="https://img.icons8.com/ios-filled/80/ffffff/cancel.png" width="60" alt="Cancelled" style="display:block;" />
+                    <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">Booking Cancelled</h2>
+                    </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                    <td style="padding:30px; color:#333333; font-size:15px;">
+                    <p>Hello <strong>${booking.customerId.name}</strong>,</p>
+                    <p>Your booking has been <strong style="color:#e63946;">cancelled</strong> by the labor.</p>
+
+                    <div style="background:#fff5f5; border-left:5px solid #e63946; padding:15px; margin:20px 0; border-radius:6px;">
+                        <p style="margin:0; font-size:14px;"><b>Reason:</b> ${reason}</p>
+                    </div>
+
+                    <p>No payment was processed. If any amount was charged, it will be refunded within 3–5 business days.</p>
+                    <p>We encourage you to book another labor through <b>LaborLink</b>.</p>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                    © ${new Date().getFullYear()} LaborLink | Payment Notifications
+                    </td>
+                </tr>
+
+                </table>
+            </td>
+            </tr>
+        </table>
+        `
         });
+
 
     } catch (error) {
         console.error('Error handling declined booking:', error.message);

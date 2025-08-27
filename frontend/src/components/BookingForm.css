@@ -1,0 +1,248 @@
+/* -----------------------------------
+   Booking Form (b-form)
+   Premium Professional Styling
+----------------------------------- */
+
+/* Background wrapper */
+.bformlanding-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #f8fbff, #eef1f7);
+  min-height: 100vh;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Form Container */
+.b-form-container {
+  background: #fff;
+  padding: 48px 40px;
+  border-radius: 20px;
+  max-width: 760px;
+  width: 100%;
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.08);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  animation: slideUp 0.9s ease forwards;
+   margin-top: 60px;
+}
+
+.b-form-container:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.12);
+}
+
+/* Title */
+.b-form-title {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #2c3e50;
+  position: relative;
+  animation: fadeInDown 0.8s ease;
+}
+
+.b-form-title::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 4px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  margin: 14px auto 0;
+  border-radius: 3px;
+  animation: growLine 1s ease;
+}
+
+/* Form grid */
+.b-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+/* Form Field */
+.b-form-field {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.b-form-field label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #444;
+  transition: color 0.3s ease;
+}
+
+.b-form-field:hover label {
+  color: #2575fc;
+}
+
+/* Inputs, Select, Textarea */
+.b-form-field input,
+.b-form-field select,
+.b-form-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border: 1.6px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  transition: all 0.35s ease;
+}
+
+.b-form-field input:focus,
+.b-form-field select:focus,
+.b-form-field textarea:focus {
+  border-color: #6a11cb;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(106, 17, 203, 0.1);
+  outline: none;
+  transform: scale(1.02);
+}
+
+/* Textarea */
+.b-form-field textarea {
+  min-height: 110px;
+  resize: none;
+}
+
+/* Map container */
+#map {
+  width: 100%;
+  height: 280px;
+  margin-top: 14px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+
+#map:hover {
+  box-shadow: 0 8px 20px rgba(37, 117, 252, 0.25);
+  transform: scale(1.01);
+}
+
+.map-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  animation: fadeIn 0.6s ease;
+}
+
+/* Total Amount */
+.b-form-total {
+  margin: 28px 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right;
+  color: #2c3e50;
+  border-top: 1px dashed #ccc;
+  padding-top: 18px;
+  animation: fadeIn 0.7s ease;
+}
+
+/* Submit Button */
+.b-form-submit {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  cursor: pointer;
+  transition: all 0.35s ease;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.b-form-submit:hover {
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(37, 117, 252, 0.35);
+}
+
+.b-form-submit:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.b-form-submit::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.2);
+  transition: left 0.4s ease;
+}
+
+.b-form-submit:hover::after {
+  left: 100%;
+}
+
+/* SweetAlert2 Styling */
+.swal2-popup.b-form-swal {
+  border-radius: 16px !important;
+  padding: 30px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+}
+
+.b-form-swal-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+}
+
+.b-form-swal-body {
+  font-size: 15px !important;
+  color: #555 !important;
+}
+
+/* ---------------------------
+   Animations
+---------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes growLine {
+  from { width: 0; }
+  to { width: 70px; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .b-form-container {
+    padding: 32px 24px;
+  }
+  .b-form-title {
+    font-size: 24px;
+  }
+}

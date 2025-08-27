@@ -148,9 +148,66 @@ const deleteLabor = async (req, res) => {
   }
 };
 
+// GET all unique services (skill categories)
+const getAllServices = async (req, res) => {
+  try {
+    const services = await Labor.distinct('skillCategory');
+    res.status(200).json({ services });
+  } catch (err) {
+    console.error('Error fetching services:', err);
+    res.status(500).json({ error: 'Failed to fetch services' });
+  }
+};
+
+// GET labors by service (skill category)
+const getLaborsByService = async (req, res) => {
+  try {
+    const { skillCategory } = req.params;
+
+    if (!skillCategory) {
+      return res.status(400).json({ error: 'Skill category is required' });
+    }
+
+    const labors = await Labor.find({ skillCategory }).select('-password');
+    res.status(200).json({ labors });
+  } catch (err) {
+    console.error('Error fetching labors by service:', err);
+    res.status(500).json({ error: 'Failed to fetch labors' });
+  }
+};
+
+const uploadLaborProfileImage = async (req, res) => {
+  try {
+    const laborId = req.params.id;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const updatedLabor = await Labor.findByIdAndUpdate(
+      laborId,
+      { profileImage: `/uploads/profileImages/${req.file.filename}` },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Profile image updated successfully",
+      labor: updatedLabor,
+    });
+  } catch (error) {
+    console.error("Error uploading profile image:", error);
+    res.status(500).json({ error: "Failed to upload profile image" });
+  }
+};
+
 module.exports = {
   registerLabor,
   getLaborDashboardData,
   updateLabor,
-  deleteLabor
+  deleteLabor,
+  getAllServices,      
+  getLaborsByService,
+  uploadLaborProfileImage
 };
+

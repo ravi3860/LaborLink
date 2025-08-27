@@ -10,3 +10,9 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPcMv8Tv_J5Mk0KUne9wyranEyJ1EGkzw&libraries=places"
+  async
+  defer
+></script>
