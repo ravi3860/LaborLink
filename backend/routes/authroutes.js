@@ -25,8 +25,11 @@ const {
   createBooking,
   getBookingsByCustomer,
   getBookingsByLabor,
+  getBookingAmount,
+  getBookingById,
   updateBookingStatus,
-  deleteBooking
+  deleteBooking,
+  clearHistory
 } = require('../controllers/bookingController');
 
 const {
@@ -34,6 +37,21 @@ const {
   markPaymentPaid,
   handleBookingDeclined
 } = require('../controllers/paymentController');
+
+// Subscription controllers
+const {
+  getSubscription,
+  updateSubscription
+} = require('../controllers/subscriptionController');
+
+const { 
+  getDashboardData,
+  getAllBookings,
+  getAllCustomers,
+  getAllLabors,
+  updateBookingStatusAsAdmin
+} = require('../controllers/adminController');
+
 
 const authMiddleware = require('../middleware/authMiddleware');
 const validateBooking = require("../middleware/bookingValidation");
@@ -114,6 +132,13 @@ router.get(
   getBookingsByCustomer
 );
 
+// Get a single booking by ID
+router.get(
+  '/bookings/:id', 
+  authMiddleware.verifyCustomer,
+  getBookingById
+);
+
 // 📌 Get bookings for a labor
 router.get(
   '/bookings/labor/:id', 
@@ -149,6 +174,51 @@ router.post(
   authMiddleware.verifyLabor,
   upload.single("profileImage"),
   uploadLaborProfileImage
+);
+
+// Clear labor booking history
+router.delete(
+  '/bookings/labor/history/clear', 
+  authMiddleware.verifyLabor, 
+  clearHistory
+);
+
+// Get current subscription
+router.get(
+  '/subscriptions/:customerId', 
+  authMiddleware.verifyCustomer, 
+  getSubscription
+);
+
+// Update/upgrade subscription
+router.put(
+  '/subscriptions/:customerId', 
+  authMiddleware.verifyCustomer, 
+  updateSubscription
+);
+
+router.get(
+  '/bookings/:bookingId/amount', 
+  authMiddleware.verifyLabor, 
+  getBookingAmount
+);
+
+router.get('/bookings', 
+  authMiddleware.verifyAdmin, 
+  getAllBookings);
+
+router.get('/customers', 
+  authMiddleware.verifyAdmin, 
+  getAllCustomers);
+  
+router.get('/labors', 
+  authMiddleware.verifyAdmin, 
+  getAllLabors);
+
+  router.patch(
+  '/admin/bookings/:id/status',
+  authMiddleware.verifyAdmin,
+  updateBookingStatusAsAdmin
 );
 
 module.exports = router;

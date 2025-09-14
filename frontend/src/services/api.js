@@ -3,6 +3,11 @@ import axios from 'axios';
 //base URL for the API
 const BASE_URL = 'http://localhost:2000/api/laborlink';
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem('token');
+  return { headers: { Authorization: `Bearer ${token}` } };
+};
+
 // 🟢 Public routes
 export const registerCustomer = async (customerData) => {
   return await axios.post(`${BASE_URL}/register/customer`, customerData);
@@ -93,11 +98,11 @@ export const getBookingsForLabor = async (laborId) => {
 };
 
 // ✅ Update booking status (uses PATCH /bookings/:id/status)
-export const updateBookingStatus = async (bookingId, status, reason = '') => {
+export const updateBookingStatus = async (bookingId, status, declineReason = '') => {
   const token = localStorage.getItem('token');
   return await axios.patch(
     `${BASE_URL}/bookings/${bookingId}/status`,
-    { status, reason },
+    { status, declineReason },
     { headers: { Authorization: `Bearer ${token}` } }
   );
 };
@@ -114,4 +119,35 @@ export const toggleTwoStepVerification = async (customerId, enable) => {
       }
     }
   );
+};
+
+// --- NEW: Admin functions ---
+export const getAllBookings = async () => {
+  return await axios.get(`${BASE_URL}/bookings`, getAuthHeader());
+};
+
+export const getAllCustomers = async () => {
+  return await axios.get(`${BASE_URL}/customers`, getAuthHeader());
+};
+
+export const getAllLabors = async () => {
+  return await axios.get(`${BASE_URL}/labors`, getAuthHeader());
+};
+
+export const deleteBooking = async (bookingId) => {
+  return await axios.delete(`${BASE_URL}/bookings/${bookingId}`, getAuthHeader());
+};
+
+export const updateBookingStatusAsAdmin = async (bookingId, status, declineReason = '') => {
+  return await axios.patch(
+    `${BASE_URL}/admin/bookings/${bookingId}/status`,
+    { status, declineReason },
+    getAuthHeader()
+  );
+};
+
+// Generic delete user function for admin
+export const deleteUser = async (userId, type) => {
+  if (type === 'customer') return await deleteCustomer(userId);
+  if (type === 'labor') return await deleteLabor(userId);
 };

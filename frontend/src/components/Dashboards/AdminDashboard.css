@@ -1,139 +1,382 @@
-:root {
+:root{
   --primary: #6D28D9;
   --accent: #A78BFA;
   --bg: #F5F3FF;
   --white: #ffffff;
   --gray: #6B7280;
+  --text-dark: #111827;
+  --danger: #EF4444;
+  --success: #10B981;
+  --warning: #FBBF24;
 }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg);
+/* Base */
+body{
+  margin:0;
+  font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:var(--text-dark);
 }
 
-.admin-dashboard {
-  display: flex;
-  height: 100vh;
-}
+/* Layout */
+.ad-dsh-dashboard{ display:flex; min-height:100vh; transition:all .35s ease; }
 
 /* Sidebar */
-.sidebar {
-  width: 240px;
-  background-color: var(--white);
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
+.ad-dsh-sidebar{
+  width:260px;
+  background: linear-gradient(180deg,var(--primary),var(--accent));
+  color:var(--white);
+  padding:30px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  box-shadow: 4px 0 20px rgba(13,12,22,0.06);
+  transition: width .35s ease;
 }
+.ad-dsh-sidebar:hover{ width:280px; }
 
-.logo {
-  color: var(--primary);
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 40px;
-}
+.ad-dsh-logo{ font-size:28px; font-weight:800; margin:0 0 18px 0; letter-spacing:0.6px; }
+.ad-dsh-logo span{ color:#FFF176; }
 
-.logo span {
-  color: var(--accent);
+.ad-dsh-nav{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+.ad-dsh-nav-item{
+  display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px; cursor:pointer;
+  transition: all .25s ease; font-weight:600; font-size:14px; position:relative;
 }
+.ad-dsh-nav-item .ad-dsh-icon{ font-size:18px; opacity:0.95; }
 
-.nav-list {
-  list-style: none;
-  padding: 0;
+.ad-dsh-nav-item::before{
+  content:""; position:absolute; left:0; top:0; height:100%; width:4px; background:transparent; border-radius:0 6px 6px 0; transition:all .25s ease;
 }
+.ad-dsh-nav-item:hover{ transform: translateX(6px); background: rgba(255,255,255,0.08); }
+.ad-dsh-nav-item.active{ background: rgba(255,255,255,0.12); }
+.ad-dsh-nav-item.active::before{ background: #FFF176; transform: translateX(0); }
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  color: var(--gray);
-  margin-bottom: 12px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+/* Logout special */
+.ad-dsh-logout{ margin-top:12px; color: #ffecec; font-weight:700; }
+.ad-dsh-logout:hover{ background: rgba(255,0,0,0.08); transform: translateX(6px); }
 
-.nav-item:hover {
-  background-color: var(--accent);
-  color: var(--white);
-}
-
-.nav-item.active {
-  background-color: var(--primary);
-  color: var(--white);
-}
-
-.icon {
-  font-size: 16px;
-}
+/* Main area */
+.ad-dsh-main{ flex:1; padding:22px 30px; display:flex; flex-direction:column; gap:18px; background: linear-gradient(180deg,#F7F5FF 0%, #F3F0FF 100%); }
 
 /* Topbar */
-.topbar {
-  background-color: var(--white);
-  padding: 20px 30px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+.ad-dsh-topbar{
+  background:var(--white);
+  padding:20px 24px;
+  border-radius:12px;
+  box-shadow: 0 6px 22px rgba(16,24,40,0.06);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ad-dsh-welcome{ margin:0; font-size:18px; }
+.ad-dsh-sub{ margin:4px 0 0 0; color:var(--gray); font-size:13px; }
+
+/* Section title */
+.ad-dsh-section{ margin-top:6px; }
+.ad-dsh-section-title{
+  color:var(--primary);
+  font-size:20px;
+  margin:0 0 16px 0;
+  position:relative;
+}
+.ad-dsh-section-title::after{
+  content:""; display:block; width:56px; height:4px; background:var(--accent); border-radius:3px; margin-top:8px; animation: expand .45s ease;
+}
+@keyframes expand{ from{width:0} to{width:56px} }
+
+/* Cards */
+.ad-dsh-cards{ display:flex; gap:18px; flex-wrap:wrap; }
+.ad-dsh-card{
+  background: linear-gradient(145deg,#ffffff,#f6f4ff);
+  flex:1; min-width:200px; border-radius:14px; padding:18px 20px; text-align:center;
+  box-shadow: 0 10px 30px rgba(13,12,22,0.06);
+  transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .35s;
+  position:relative; overflow:hidden;
+}
+.ad-dsh-card:hover{ transform: translateY(-8px) scale(1.02); }
+.ad-dsh-card-top{ display:flex; justify-content:center; align-items:center; height:48px; }
+.ad-dsh-card-icon{ font-size:34px; color:var(--primary); }
+.ad-dsh-card h3{ margin:10px 0 4px 0; font-size:26px; }
+.ad-dsh-card p{ color:var(--gray); margin:0; }
+
+/* Tables */
+.ad-dsh-table{ width:100%; border-collapse:collapse; margin-top:8px; background:var(--white); border-radius:12px; overflow:hidden; box-shadow:0 8px 22px rgba(13,12,22,0.04); }
+.ad-dsh-table th, .ad-dsh-table td{ padding:12px 16px; text-align:left; font-size:14px; }
+.ad-dsh-table th{ background:var(--primary); color:#fff; font-weight:700; font-size:13px; letter-spacing:0.2px; }
+.ad-dsh-table tr{ transition: background .2s ease; }
+.ad-dsh-table tr:hover{ background: rgba(109,40,217,0.04); }
+
+/* Name column emphasis */
+.ad-dsh-td-name{ font-weight:700; color:var(--text-dark); }
+
+/* Delete button */
+.ad-dsh-delete{
+  background:var(--danger); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+  box-shadow: 0 6px 12px rgba(239,68,68,0.12); transition: transform .18s ease, background .18s ease;
+}
+.ad-dsh-delete:hover{ transform: translateY(-2px) scale(1.02); background:#DC2626; }
+
+/* Booking cards (list) */
+.ad-dsh-booking-cards{ display:flex; flex-direction:column; gap:14px; margin-top:8px; }
+.ad-dsh-booking-card{
+  display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 18px;
+  background:var(--white); border-radius:12px; box-shadow:0 8px 20px rgba(109,40,217,0.06); transition: transform .25s ease, box-shadow .25s ease;
+}
+.ad-dsh-booking-card:hover{ transform: translateY(-6px); box-shadow: 0 14px 34px rgba(109,40,217,0.12); }
+.ad-dsh-booking-info{ display:flex; flex-direction:column; gap:6px; }
+.ad-dsh-booking-id{ color:var(--primary); font-weight:700; }
+.ad-dsh-booking-id span{ color:var(--gray); font-weight:600; margin-left:6px; }
+.ad-dsh-booking-user, .ad-dsh-booking-labor{ display:flex; align-items:center; gap:8px; color:var(--gray); font-weight:600; }
+.ad-dsh-small-icon{ font-size:14px; color:var(--primary); }
+
+/* Booking actions and status */
+.ad-dsh-booking-actions{ display:flex; align-items:center; gap:12px; }
+.ad-dsh-status{ padding:6px 10px; border-radius:8px; color:#000000; font-weight:700; text-transform:capitalize; font-size:13px; box-shadow:0 6px 12px rgba(0,0,0,0.06); }
+.ad-dsh-status.pending{ background:var(--warning); color:#111; }
+.ad-dsh-status.accepted{ background:var(--primary); }
+.ad-dsh-status.completed{ background:var(--success); }
+.ad-dsh-status.canceled{ background:var(--danger); }
+
+.ad-dsh-dropdown{ padding:8px 12px; border-radius:10px; border:none; font-weight:700; cursor:pointer; color:#000000; transition: transform .18s ease; }
+.ad-dsh-dropdown.pending{ background:var(--warning); color:#111; }
+.ad-dsh-dropdown.accepted{ background:var(--primary); }
+.ad-dsh-dropdown.completed{ background:var(--success); }
+.ad-dsh-dropdown.canceled{ background:var(--danger); }
+
+/* Charts */
+.ad-dsh-charts{ display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; }
+.ad-dsh-chart-card{ flex:1; min-width:300px; background:var(--white); padding:18px; border-radius:12px; box-shadow:0 12px 30px rgba(13,12,22,0.06); transition: transform .25s ease; }
+.ad-dsh-chart-card:hover{ transform: translateY(-6px) scale(1.01); }
+
+/* Small utilities */
+.ad-dsh-icon{ font-size:16px; }
+
+/* Responsive */
+@media (max-width: 1100px){
+  .ad-dsh-cards{ flex-direction:column; }
+  .ad-dsh-sidebar{ width:220px; }
+}
+@media (max-width: 800px){
+  .ad-dsh-dashboard{ flex-direction:column; }
+  .ad-dsh-sidebar{ width:100%; flex-direction:row; align-items:center; padding:12px; gap:6px; overflow-x:auto; }
+  .ad-dsh-nav{ flex-direction:row; gap:10px; }
+  .ad-dsh-main{ padding:14px; }
+  .ad-dsh-topbar{ flex-direction:column; align-items:flex-start; gap:8px; padding:12px; }
+  .ad-dsh-booking-card{ flex-direction:column; align-items:flex-start; }
+  .ad-dsh-booking-actions{ width:100%; justify-content:flex-start; gap:10px; }
 }
 
-.topbar h3 {
-  margin: 0;
-  color: var(--gray);
+/* Dashboard Overview */
+.ad-dsh-cards-overview{ gap:20px; margin-bottom:20px; }
+
+.ad-dsh-booking-overview{ margin-top:20px; }
+.ad-dsh-status-cards{ display:flex; gap:14px; flex-wrap:wrap; }
+.ad-dsh-status-card{
+  flex:1; min-width:120px; padding:12px 16px; background:#fff; border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.ad-dsh-status-card:hover{ transform: translateY(-4px); box-shadow:0 14px 34px rgba(0,0,0,0.12); }
+.status-label{ font-weight:600; font-size:14px; color:#4B5563; }
+.status-count{ font-weight:700; font-size:18px; }
+
+.ad-dsh-status-card.pending{ border-left:4px solid var(--warning); }
+.ad-dsh-status-card.accepted{ border-left:4px solid var(--primary); }
+.ad-dsh-status-card.completed{ border-left:4px solid var(--success); }
+.ad-dsh-status-card.canceled{ border-left:4px solid var(--danger); }
+
+/* Recent Bookings */
+.ad-dsh-recent-bookings{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+.ad-dsh-recent-bookings li{
+  display:flex; justify-content:space-between; align-items:center; background:#f8f7ff; padding:8px 12px; border-radius:10px; font-size:14px;
+}
+.ad-dsh-recent-bookings li .status-label{ padding:4px 8px; border-radius:6px; font-weight:700; text-transform:capitalize; font-size:12px; }
+.ad-dsh-recent-bookings li .status-label.pending{ background:var(--warning); color:#111; }
+.ad-dsh-recent-bookings li .status-label.accepted{ background:var(--primary); color:#fff; }
+.ad-dsh-recent-bookings li .status-label.completed{ background:var(--success); color:#fff; }
+.ad-dsh-recent-bookings li .status-label.canceled{ background:var(--danger); color:#fff; }
+
+/* Mini Charts Section */
+.ad-dsh-mini-charts{ display:flex; gap:18px; flex-wrap:wrap; margin-top:20px; }
+.ad-dsh-mini-charts .ad-dsh-chart-card{ flex:1; min-width:280px; }
+
+/* Search and Filter */
+.ad-dsh-booking-filters{
+  display:flex; gap:12px; margin-bottom:16px;
+}
+.ad-dsh-search{
+  flex:1; padding:10px 14px; border-radius:10px; border:1px solid #ccc; font-size:14px;
+  transition: box-shadow .25s ease;
+}
+.ad-dsh-search:focus{ box-shadow: 0 4px 12px rgba(109,40,217,0.2); outline:none; }
+.ad-dsh-filter{
+  padding:10px 14px; border-radius:10px; border:1px solid #ccc; font-weight:600; cursor:pointer;
 }
 
-/* Main Content */
-.main-content {
-  flex: 1;
-  background-color: #F3F0FF;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+/* Booking card selection */
+.ad-dsh-booking-card.selected{
+  border:2px solid var(--primary);
+  box-shadow:0 16px 40px rgba(109,40,217,0.18);
 }
 
-.dashboard-section {
-  padding: 30px;
+/* Action buttons with icon */
+.ad-dsh-booking-actions button.ad-dsh-delete{
+  display:flex; align-items:center; gap:6px;
 }
 
-.dashboard-section h2 {
+/* Tooltip for better UX */
+.ad-dsh-booking-card[title]:hover::after{
+  content: attr(title);
+  position:absolute; top:-28px; left:50%; transform:translateX(-50%);
+  background:var(--primary); color:#fff; padding:4px 8px; font-size:12px;
+  border-radius:6px; white-space:nowrap;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15); z-index:10;
+}
+
+/* Hover enhancements */
+.ad-dsh-booking-card:hover{
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(109,40,217,0.12);
+}
+.ad-dsh-booking-actions select.ad-dsh-dropdown:hover{
+  transform: scale(1.05);
+}
+
+/* Customer Section */
+.ad-dsh-cus-section { margin-top: 10px; }
+.ad-dsh-cus-title {
   color: var(--primary);
-  margin-bottom: 30px;
+  font-size: 22px;
+  margin-bottom: 18px;
+  position: relative;
+}
+.ad-dsh-cus-title::after {
+  content:""; display:block; width:60px; height:4px; background:var(--accent); border-radius:3px; margin-top:6px; animation: expand .45s ease;
 }
 
-.cards {
-  display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
+/* Filters */
+.ad-dsh-cus-filters { display:flex; gap:12px; margin-bottom:16px; }
+.ad-dsh-cus-search, .ad-dsh-cus-filter {
+  padding:10px 14px; border-radius:10px; border:1px solid #ccc; font-size:14px;
+  transition: box-shadow .25s ease;
+}
+.ad-dsh-cus-search:focus { box-shadow: 0 4px 12px rgba(109,40,217,0.2); outline:none; }
+
+/* Cards Grid */
+.ad-dsh-cus-cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:18px; }
+
+/* Individual Customer Card */
+.ad-dsh-cus-card {
+  background: var(--white);
+  border-radius:14px;
+  box-shadow: 0 10px 30px rgba(13,12,22,0.06);
+  padding:18px 20px; display:flex; flex-direction:column; gap:12px;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.ad-dsh-cus-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(109,40,217,0.12);
 }
 
-.card {
-  background-color: var(--white);
-  border-radius: 20px;
-  padding: 25px 30px;
-  text-align: center;
-  box-shadow: 0 10px 20px rgba(109, 40, 217, 0.08);
-  flex: 1;
-  min-width: 200px;
-  transition: transform 0.3s ease;
+/* Header */
+.ad-dsh-cus-header h3 { margin:0; font-size:18px; color: var(--text-dark); }
+.ad-dsh-cus-email { font-size:13px; color: var(--gray); }
+
+/* Analytics Overview */
+.ad-dsh-cus-analytics { display:flex; justify-content:space-between; margin-top:8px; }
+.ad-dsh-cus-analytics-item p { font-size:13px; margin:0; color: var(--gray); }
+.ad-dsh-cus-analytics-item span { font-size:16px; font-weight:700; color: var(--text-dark); }
+
+/* Progress Bar */
+.ad-dsh-cus-progress p { font-size:13px; color: var(--gray); margin-bottom:6px; }
+.ad-dsh-cus-progress-bar {
+  background:#f3f0ff; border-radius:8px; height:10px; width:100%; overflow:hidden;
+}
+.ad-dsh-cus-progress-fill {
+  background: var(--primary); height:100%; border-radius:8px; transition: width .35s ease;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+/* Actions */
+.ad-dsh-cus-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
+.ad-dsh-cus-delete {
+  background: var(--danger); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+  box-shadow: 0 6px 12px rgba(239,68,68,0.12); transition: transform .18s ease, background .18s ease;
 }
+.ad-dsh-cus-delete:hover { transform: translateY(-2px) scale(1.02); background:#DC2626; }
+.ad-dsh-cus-detail {
+  background: var(--primary); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+  box-shadow: 0 6px 12px rgba(109,40,217,0.12); transition: transform .18s ease, background .18s ease;
+}
+.ad-dsh-cus-detail:hover { transform: translateY(-2px) scale(1.02); background:#5B21B6; }
 
-.card-icon {
-  font-size: 30px;
+/* Labor Section */
+.ad-dsh-lb-section { margin-top: 10px; }
+.ad-dsh-lb-title {
   color: var(--primary);
-  margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 18px;
+  position: relative;
+}
+.ad-dsh-lb-title::after {
+  content: ""; display: block; width: 60px; height: 4px; background: var(--accent); border-radius: 3px; margin-top: 6px; animation: expand .45s ease;
 }
 
-.card h3 {
-  margin: 5px 0;
-  font-size: 26px;
-  color: #111827;
+/* Filters */
+.ad-dsh-lb-filters { display:flex; gap:12px; margin-bottom:16px; }
+.ad-dsh-lb-search, .ad-dsh-lb-filter {
+  padding:10px 14px; border-radius:10px; border:1px solid #ccc; font-size:14px;
+  transition: box-shadow .25s ease;
+}
+.ad-dsh-lb-search:focus { box-shadow: 0 4px 12px rgba(109,40,217,0.2); outline:none; }
+
+/* Cards Grid */
+.ad-dsh-lb-cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:18px; }
+
+/* Individual Labor Card */
+.ad-dsh-lb-card {
+  background: var(--white);
+  border-radius:14px;
+  box-shadow: 0 10px 30px rgba(13,12,22,0.06);
+  padding:18px 20px; display:flex; flex-direction:column; gap:12px;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.ad-dsh-lb-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(109,40,217,0.12);
 }
 
-.card p {
-  color: var(--gray);
-  margin: 0;
+/* Header */
+.ad-dsh-lb-header h3 { margin:0; font-size:18px; color: var(--text-dark); }
+.ad-dsh-lb-skill { font-size:13px; color: var(--gray); font-weight:600; }
+
+/* Analytics Overview */
+.ad-dsh-lb-analytics { display:flex; justify-content:space-between; margin-top:8px; }
+.ad-dsh-lb-analytics-item p { font-size:13px; margin:0; color: var(--gray); }
+.ad-dsh-lb-analytics-item span { font-size:16px; font-weight:700; color: var(--text-dark); }
+
+/* Progress Bar */
+.ad-dsh-lb-progress p { font-size:13px; color: var(--gray); margin-bottom:6px; }
+.ad-dsh-lb-progress-bar {
+  background:#f3f0ff; border-radius:8px; height:10px; width:100%; overflow:hidden;
 }
+.ad-dsh-lb-progress-fill {
+  background: var(--primary); height:100%; border-radius:8px; transition: width .35s ease;
+}
+
+/* Actions */
+.ad-dsh-lb-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
+.ad-dsh-lb-delete {
+  background: var(--danger); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+  box-shadow: 0 6px 12px rgba(239,68,68,0.12); transition: transform .18s ease, background .18s ease;
+}
+.ad-dsh-lb-delete:hover { transform: translateY(-2px) scale(1.02); background:#DC2626; }
+.ad-dsh-lb-detail {
+  background: var(--primary); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
+  box-shadow: 0 6px 12px rgba(109,40,217,0.12); transition: transform .18s ease, background .18s ease;
+}
+.ad-dsh-lb-detail:hover { transform: translateY(-2px) scale(1.02); background:#5B21B6; }
+
+/* Mini Charts Section */
+.ad-dsh-lb-mini-charts { display:flex; gap:18px; flex-wrap:wrap; margin-top:20px; }
+.ad-dsh-lb-mini-charts .ad-dsh-chart-card { flex:1; min-width:280px; background:var(--white); padding:18px; border-radius:12px; box-shadow:0 12px 30px rgba(13,12,22,0.06); transition: transform .25s ease; }
+.ad-dsh-lb-mini-charts .ad-dsh-chart-card:hover { transform: translateY(-6px) scale(1.01); }
+

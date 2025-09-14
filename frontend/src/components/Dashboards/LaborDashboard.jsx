@@ -18,10 +18,22 @@ import {
   FaIdBadge,
   FaClock,
   FaCalendarDay,
-  FaPen 
+  FaPen,
+  FaMapMarkedAlt,
+  FaPhoneAlt,
+  FaExclamationTriangle
+
 } from 'react-icons/fa';
 import { FaUserAlt, FaBriefcase, FaMoneyBillWave, FaDollarSign, FaTasks, FaTrashAlt, FaPlus, FaBolt, FaCheckCircle} from "react-icons/fa";
+import { 
+  FaUserCircle, FaTools, FaCalendarAlt, FaBan, FaTrophy, 
+  FaCreditCard, FaFolderOpen, FaExternalLinkAlt, 
+} from "react-icons/fa";
+import { MdPendingActions, MdCancel} from "react-icons/md";
+import { AiOutlineAppstore } from "react-icons/ai";
 import './LaborDashboard.css';
+import axios from 'axios';
+import { FaFileInvoice } from "react-icons/fa";
 
 const LaborDashboard = () => {
   const [laborData, setLaborData] = useState(null);
@@ -34,6 +46,7 @@ const LaborDashboard = () => {
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [declineReason, setDeclineReason] = useState("");
   const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [bookingAmounts, setBookingAmounts] = useState({});
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -57,6 +70,17 @@ const LaborDashboard = () => {
   };
   fetchAll();
 }, [navigate]);
+
+useEffect(() => {
+  const fetchAllAmounts = async () => {
+    const amounts = {};
+    for (let b of bookings) {
+      amounts[b._id] = await fetchBookingAmount(b._id);
+    }
+    setBookingAmounts(amounts);
+  };
+  if (bookings.length) fetchAllAmounts();
+}, [bookings]);
 
   const handleLogout = () => {
     logout();
@@ -136,7 +160,22 @@ const LaborDashboard = () => {
   setProjects(updatedProjects);
 };
 
-
+const fetchBookingAmount = async (bookingId) => {
+  try {
+    const token = localStorage.getItem("token"); // labor token
+    const res = await axios.get(
+      `http://localhost:2000/api/laborlink/bookings/${bookingId}/amount`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return res.data.amount;
+  } catch (err) {
+    console.error(
+      "Failed to fetch booking amount:",
+      err.response?.data || err.message
+    );
+    return 0;
+  }
+};
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
@@ -183,6 +222,34 @@ const handleBookingStatus = async (bookingId, newStatus, reason = '') => {
 const norm = s => (s || '').toString().trim().toLowerCase();
 const CURRENT = new Set(['pending', 'accepted', 'ongoing']);
 const HISTORY = new Set(['completed', 'cancelled', 'declined']);
+
+// Clear History
+const handleClearHistory = async () => {
+  if (!window.confirm("Are you sure you want to clear all past bookings? This cannot be undone.")) return;
+
+  try {
+    // ✅ Use the correct token key
+    const token = localStorage.getItem('token'); 
+    const res = await fetch(`http://localhost:2000/api/laborlink/bookings/labor/history/clear`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // ✅ Correct token
+      },
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      Swal.fire('Success', data.message, 'success');
+      await refreshBookings(); // refresh bookings after clearing
+    } else {
+      Swal.fire('Error', data.message || 'Failed to clear history', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    Swal.fire('Error', 'Something went wrong while clearing history.', 'error');
+  }
+};
 
 
   return (
@@ -616,152 +683,356 @@ const HISTORY = new Set(['completed', 'cancelled', 'declined']);
           </>
         )}
 
+{/* ----------------- BOOKINGS (redesigned) ----------------- */}
 {activeTab === 'bookings' && (
-  <div className="labor-dashboard-grid">
-    <section className="labor-card full-width">
-      <h3>Your Bookings</h3>
+  <div className="lb-bk-dashboard-grid">
+    <section className="lb-bk-card full-width">
+      <div className="lb-bk-header-row">
+        <h3 className="lb-bk-header">
+          <FaMapMarkedAlt /> &nbsp; Your Bookings
+          <small>Manage customer requests, payments & job statuses</small>
+        </h3>
 
-      {/* Booking Stats */}
-     <div className="labor-bookings-stats">
-      {['Total', 'Pending', 'Accepted', 'Ongoing', 'Completed', 'Cancelled', 'Declined'].map((status, i) => {
-        const total = status === 'Total'
-          ? bookings.length
-          : bookings.filter(b => norm(b.status) === norm(status)).length;
-        return (
-          <div key={i} className="labor-booking-stat-card">
-            <span>{status}</span>
-            <strong>{total}</strong>
-          </div>
-        );
-      })}
-    </div>
+        {/* Stats (small tiles) */}
+        <div className="lb-bk-stats">
+          {[
+            {label: 'Total', icon: <AiOutlineAppstore />},
+            {label: 'Pending', icon: <MdPendingActions />},
+            {label: 'Accepted', icon: <FaCheckCircle />},
+            {label: 'Ongoing', icon: <FaTools />},
+            {label: 'Completed', icon: <FaTrophy />},
+            {label: 'Cancelled', icon: <MdCancel />},
+            {label: 'Declined', icon: <FaBan />}
+          ].map((item, i) => {
+            const total = item.label === 'Total'
+              ? bookings.length
+              : bookings.filter(b => norm(b.status) === norm(item.label)).length;
+            return (
+              <div key={i} className={`lb-bk-stat-card ${norm(item.label)}`}>
+                <div className="lb-bk-stat-icon">{item.icon}</div>
+                <div className="lb-bk-stat-label">{item.label}</div>
+                <div className="lb-bk-stat-value">{total}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-
-      {/* Booking Sub-tabs */}
-      <div className="labor-booking-tabs">
-        <button
-          className={`labor-booking-tab ${bookingTab === 'current' ? 'active' : ''}`}
-          onClick={() => setBookingTab('current')}
-        >
-          Current Bookings
+      {/* Tabs */}
+      <div className="lb-bk-tabs">
+        <button className={`lb-bk-tab ${bookingTab === 'current' ? 'active' : ''}`}
+                onClick={() => setBookingTab('current')}>
+          <FaFolderOpen /> Current
         </button>
-        <button
-          className={`labor-booking-tab ${bookingTab === 'history' ? 'active' : ''}`}
-          onClick={() => setBookingTab('history')}
-        >
-          Booking History
+        <button className={`lb-bk-tab ${bookingTab === 'history' ? 'active' : ''}`}
+                onClick={() => setBookingTab('history')}>
+          <FaHistory /> History
         </button>
       </div>
 
-      {/* Booking Content */}
+      {/* Current */}
       {bookingTab === 'current' && (
-        <div className="labor-bookings-section">
+        <div className="lb-bk-section">
           {bookings.filter(b => CURRENT.has(norm(b.status))).length === 0 ? (
-            <p className="labor-empty-state">No current bookings.</p>
+            <p className="lb-bk-empty">No current bookings.</p>
           ) : (
-            bookings
-              .filter(b => CURRENT.has(norm(b.status)))
-              .map((booking, idx) => {
-                const customerName = booking.customerName || booking.customer?.name || booking.customer?.fullName || 'N/A';
-                const serviceName = booking.service || booking.serviceName || booking.category || 'N/A';
-                const when = booking.bookingDate || booking.date || booking.scheduledFor || booking.createdAt;
-                return (
-                  <div key={idx} className={`labor-booking-card ${norm(booking.status)}`}>
-                    <div className="labor-booking-info">
-                      <p><strong>Customer:</strong> {customerName}</p>
-                      <p><strong>Service:</strong> {serviceName}</p>
-                      <p><strong>Date:</strong> {when ? new Date(when).toLocaleDateString() : 'N/A'}</p>
-                      <span className={`booking-status ${norm(booking.status)}`}>{booking.status}</span>
+            bookings.filter(b => CURRENT.has(norm(b.status))).map((booking, idx) => {
+              // details
+              const customerName = booking.customerName || booking.customer?.name || 'N/A';
+              const serviceName = booking.service || booking.category || 'N/A';
+              const when = booking.bookingDate || booking.date || booking.scheduledFor || booking.createdAt;
+
+              // location from booking model
+              const lat = booking.locationCoordinates?.lat;
+              const lng = booking.locationCoordinates?.lng;
+              const address = booking.locationAddress || booking.customer?.address || "No address provided";
+
+              // payment
+              const isPaid = booking.payment?.status === 'paid';
+              const method = booking.payment?.method;
+              const brand = booking.payment?.card?.brand || booking.payment?.brand || null;
+              const last4 = booking.payment?.card?.last4 || booking.payment?.last4 || null;
+              const receiptUrl = booking.payment?.receiptUrl || booking.payment?.receipt_url || null;
+              const paidAt = booking.payment?.paidAt || booking.payment?.capturedAt || booking.payment?.createdAt || null;
+
+
+              const mapSrc = (lat && lng)
+                ? `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`
+                : `https://maps.google.com/maps?q=${encodeURIComponent(address)}&z=15&output=embed`;
+
+              const mapsLink = (lat && lng)
+                ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+
+              
+              return (
+                <article key={idx} className={`lb-bk-card-grid ${norm(booking.status)}`} aria-labelledby={`bk-${booking._id}`}>
+                  {/* LEFT: Info + map */}
+                  <div className="lb-bk-left">
+                    <div className="lb-bk-topline">
+                      <div className="lb-bk-avatar" title={customerName}>
+                        {/* initials */}
+                        {customerName.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase()}
+                      </div>
+                      <div className="lb-bk-main-info">
+                        <div className="lb-bk-customer">
+                          <strong className="lb-bk-name">{customerName}</strong>
+                          <span className="lb-bk-service">{serviceName}</span>
+                        </div>
+                        <div className="lb-bk-meta-row">
+                          <div className="lb-bk-meta-item"><FaCalendarAlt /> {when ? new Date(when).toLocaleString() : 'N/A'}</div>
+                          <div className="lb-bk-meta-item"><FaPhoneAlt /> {booking.customerPhone || ''}</div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="labor-booking-actions">
-                      {norm(booking.status) === 'pending' && (
+
+                    <div className="lb-bk-location-block">
+                      <div className="lb-bk-location-title"><FaMapMarkerAlt /> Location</div>
+                      <div className="lb-bk-location-text">{address}</div>
+
+                      <div className="lb-bk-map-thumb" role="img" aria-label={`Map for ${address}`}>
+                        {/* small iframe thumbnail */}
+                        <iframe
+                          src={mapSrc}
+                          title={`map-${booking._id}`}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          allowFullScreen
+                        />
+                        <a className="lb-bk-map-cta" href={mapsLink} target="_blank" rel="noreferrer">
+                          <FaExternalLinkAlt /> View larger map
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="lb-bk-notes">
+                      {booking.notes && (
                         <>
-                          <button onClick={() => handleBookingStatus(booking._id, 'Accepted')} className="labor-btn labor-btn-primary">Accept</button>
-                          <button onClick={() => { setSelectedBookingId(booking._id); setShowDeclineModal(true); }} className="labor-btn labor-btn-danger">Decline</button>
+                          <div className="lb-bk-notes-title">Notes</div>
+                          <div className="lb-bk-notes-text">{booking.notes}</div>
                         </>
                       )}
-                      {norm(booking.status) === 'accepted' || norm(booking.status) === 'ongoing' ? (
+                    </div>
+                  </div>
+
+                  {/* RIGHT: status / payment / actions */}
+                  <aside className="lb-bk-right">
+                    <div className="lb-bk-status-row">
+                      <span className={`lb-bk-status ${norm(booking.status)}`}>
+                        {norm(booking.status) === 'pending' && <MdPendingActions />}
+                        {norm(booking.status) === 'accepted' && <FaCheckCircle />}
+                        {norm(booking.status) === 'ongoing' && <FaTools />}
+                        {norm(booking.status) === 'completed' && <FaTrophy />}
+                        {norm(booking.status) === 'cancelled' && <MdCancel />}
+                        &nbsp; {booking.status}
+                      </span>
+
+                     <div className="lb-bk-amount">
+  Rs. {bookingAmounts[booking._id]?.toLocaleString() || 0}
+</div>
+                    </div>
+
+                   {/* Payment panel */}
+                    <div className="lb-bk-payment-panel">
+                      {booking.payment ? (
                         <>
-                          <button onClick={() => handleBookingStatus(booking._id, 'Completed')} className="labor-btn labor-btn-primary">Mark Completed</button>
-                          <button onClick={() => handleBookingStatus(booking._id, 'Cancelled')} className="labor-btn labor-btn-danger">Cancel</button>
+                          <div className="lb-bk-payment-left">
+                            {method === 'card' ? <FaCreditCard /> : <FaMoneyBillWave />}
+                          </div>
+                          <div className="lb-bk-payment-body">
+                            <div className="lb-bk-payment-title">
+                              {method === 'card'
+                                ? `Paid • ${brand ? brand.toUpperCase() : 'CARD'} ${last4 ? `• • • • ${last4}` : ''}`
+                                : booking.payment.status === 'paid'
+                                  ? 'Paid (Cash)'
+                                  : 'Cash Payment Pending'
+                              }
+                            </div>
+                            <div className="lb-bk-payment-sub">
+                              {paidAt
+                                ? `Paid on ${new Date(paidAt).toLocaleString()}`
+                                : method === 'cash' && booking.payment.status !== 'paid'
+                                  ? 'Payment will be recorded after labor marks completed'
+                                  : 'Payment recorded'
+                              }
+                            </div>
+                          </div>
+                          <div className="lb-bk-payment-actions">
+                            {receiptUrl && method === 'card' && (
+                              <a className="lb-bk-receipt-btn" href={receiptUrl} target="_blank" rel="noreferrer">
+                                <FaFileInvoice /> Receipt
+                              </a>
+                            )}
+                            {booking.payment.status === 'paid' && (
+                              <span className="lb-bk-paid-pill"><FaCheckCircle /> Paid</span>
+                            )}
+                          </div>
                         </>
-                      ) : null}
+                      ) : (
+                        <div className="lb-bk-unpaid">
+                          <FaCreditCard /> <strong>Pending payment</strong>
+                          <div className="lb-bk-unpaid-sub">Payment will appear here once customer completes it.</div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-              })
+
+                    {/* Actions group */}
+                    <div className="lb-bk-actions-col">
+                      {norm(booking.status) === 'pending' && (
+                        <>
+                          <button className="lb-bk-btn lb-bk-btn-primary"
+                                  onClick={() => handleBookingStatus(booking._id, 'Accepted')}>
+                            <FaCheckCircle /> Accept
+                          </button>
+                          <button className="lb-bk-btn lb-bk-btn-outline"
+                                  onClick={() => { setSelectedBookingId(booking._id); setShowDeclineModal(true); }}>
+                            <FaBan /> Decline
+                          </button>
+                        </>
+                      )}
+
+                      {(norm(booking.status) === 'accepted' || norm(booking.status) === 'ongoing') && (
+                        <>
+                          <button
+                            className="lb-bk-btn lb-bk-btn-primary"
+                            onClick={() => handleBookingStatus(booking._id, 'Completed')}
+                            disabled={
+                              !booking.payment || // no payment record
+                              (method === 'card' && !isPaid) // card not paid
+                            }
+                            title={
+                              !booking.payment
+                                ? 'Cannot complete: Payment not recorded yet'
+                                : method === 'card' && !isPaid
+                                  ? 'Cannot complete before card payment'
+                                  : 'Mark as completed'
+                            }
+                          >
+                            <FaCheckCircle /> Mark Completed
+                          </button>
+
+
+                         <button
+                            className="lb-bk-btn lb-bk-btn-danger"
+                            onClick={() => {
+                              setSelectedBookingId(booking._id);
+                              setShowDeclineModal(true);
+                            }}
+                          >
+                            <MdCancel /> Cancel
+                          </button>
+
+
+                          <a className="lb-bk-btn lb-bk-btn-ghost" href={mapsLink} target="_blank" rel="noreferrer">
+                            <FaExternalLinkAlt /> Navigate
+                          </a>
+                        </>
+                      )}
+
+                      {/* small meta */}
+                      <div className="lb-bk-small-meta">
+                        <div><strong>ID:</strong> <span className="mono">{booking._id}</span></div>
+                        <div><strong>Labor:</strong> {booking.laborId?.name || booking.laborName || '—'}</div>
+                      </div>
+                    </div>
+                  </aside>
+                </article>
+              );
+            })
           )}
         </div>
       )}
 
-
-      {bookingTab === 'history' && (
-        <div className="labor-bookings-section">
-          {bookings.filter(b => HISTORY.has(norm(b.status))).length === 0 ? (
-            <p className="labor-empty-state">No past bookings.</p>
-          ) : (
-            bookings
-              .filter(b => HISTORY.has(norm(b.status)))
-              .map((booking, idx) => {
-                const customerName = booking.customerName || booking.customer?.name || booking.customer?.fullName || 'N/A';
-                const serviceName = booking.service || booking.serviceName || booking.category || 'N/A';
-                const when = booking.bookingDate || booking.date || booking.scheduledFor || booking.createdAt;
-                return (
-                  <div key={idx} className={`labor-booking-card history ${norm(booking.status)}`}>
-                    <div className="labor-booking-info">
-                      <p><strong>Customer:</strong> {customerName}</p>
-                      <p><strong>Service:</strong> {serviceName}</p>
-                      <p><strong>Date:</strong> {when ? new Date(when).toLocaleDateString() : 'N/A'}</p>
-                      <span className={`booking-status ${norm(booking.status)}`}>{booking.status}</span>
-                    </div>
-                  </div>
-                );
-              })
-          )}
-        </div>
-      )}
-      </section>
-    </div>
-  )}
-
+      {/* Decline Modal */}
         {showDeclineModal && (
-          <div className="decline-modal-overlay">
-            <div className="decline-modal">
-              <h3>Decline Booking</h3>
-              <p>Please provide a reason for declining this booking:</p>
+          <div className="lb-bk-decline-overlay">
+            <div className="lb-bk-decline-modal">
+              <FaExclamationTriangle className="lb-bk-modal-icon"/>
+              <h3>Cancel / Decline Booking</h3>
+              <p>Please provide a reason for cancelling or declining this booking:</p>
               <textarea
-                className="decline-textarea"
+                className="lb-bk-decline-textarea"
                 value={declineReason}
                 onChange={(e) => setDeclineReason(e.target.value)}
                 placeholder="Type your reason here..."
               />
-              <div className="decline-actions">
-                <button 
-                  className="labor-btn labor-btn-secondary" 
+              <div className="lb-bk-decline-actions">
+                <button
+                  className="lb-bk-btn lb-bk-btn-secondary"
                   onClick={() => {
                     setDeclineReason("");
                     setShowDeclineModal(false);
                   }}
                 >
-                  Cancel
+                  Close
                 </button>
-                <button 
-                  className="labor-btn labor-btn-danger"
-                  onClick={() => {
-                    handleBookingStatus(selectedBookingId, "Cancelled", declineReason);
-                    setDeclineReason("");
-                    setShowDeclineModal(false);
-                  }}
-                >
-                  Confirm Decline
-                </button>
+             <button
+                className="lb-bk-btn lb-bk-btn-danger"
+                onClick={() => {
+                  handleBookingStatus(
+                    selectedBookingId, 
+                    "Cancelled",
+                    declineReason
+                  );
+                  setDeclineReason("");
+                  setShowDeclineModal(false);
+                }}
+              >
+                Confirm Cancel
+              </button>
+
               </div>
             </div>
           </div>
         )}
 
-        {/* Subscriptions */}
-        {activeTab === 'subscriptions' && (
+     {/* History (simpler professional layout) */}
+      {bookingTab === 'history' && (
+        <div className="lb-bk-section">
+          {bookings.filter(b => HISTORY.has(norm(b.status))).length === 0 ? (
+            <p className="lb-bk-empty">No past bookings.</p>
+          ) : (
+            bookings.filter(b => HISTORY.has(norm(b.status))).map((booking, idx) => {
+              const customerName = booking.customerName || booking.customer?.name || booking.customer?.fullName || 'N/A';
+              const serviceName = booking.service || booking.serviceName || booking.category || 'N/A';
+              const when = booking.bookingDate || booking.date || booking.scheduledFor || booking.createdAt;
+              const address = booking.locationAddress || booking.address || booking.customer?.address || "No address provided";
+
+              return (
+                <div key={idx} className={`lb-bk-card history ${norm(booking.status)}`}>
+                  <div className="lb-bk-info">
+                    <p><FaUserCircle /> <strong>Customer:</strong> {customerName}</p>
+                    <p><FaTools /> <strong>Service:</strong> {serviceName}</p>
+                    <p><FaCalendarAlt /> <strong>Date:</strong> {when ? new Date(when).toLocaleDateString() : 'N/A'}</p>
+                    <p><FaMapMarkerAlt /> <strong>Location:</strong> {address}</p>
+                  </div>
+                  <div className="lb-bk-history-meta">
+                    <span className={`lb-bk-status ${norm(booking.status)}`}>{booking.status}</span>
+                    <div className="lb-bk-small-meta"><strong>ID:</strong> <span className="mono">{booking._id}</span></div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+
+          {/* Clear History Button */}
+          {bookings.filter(b => HISTORY.has(norm(b.status))).length > 0 && (
+            <div className="lb-bk-clear-history">
+              <button className="lb-bk-btn lb-bk-btn-secondary" onClick={handleClearHistory}>
+                <FaTrashAlt /> Clear History
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  </div>
+)}
+
+
+
+  {/* Subscriptions */}
+  {activeTab === 'subscriptions' && (
   <section className="labor-subscriptions-section">
     <h3 className="section-title">Your Active Subscriptions</h3>
 

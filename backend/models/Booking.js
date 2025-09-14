@@ -88,6 +88,12 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+
+    payment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Payment'
+    },
+
     createdAt: {
         type: Date,
         default: Date.now

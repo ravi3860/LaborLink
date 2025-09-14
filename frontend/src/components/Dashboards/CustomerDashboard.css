@@ -1086,6 +1086,98 @@ body {
 }
 .empty-illustration{ font-size:54px; }
 
+/* ----------------- Customer Booking History ----------------- */
+.cusdash-history-section {
+  padding: 25px;
+  background: #f9f9fb;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  margin-top: 20px;
+}
+
+.cusdash-history-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #4a148c;
+  margin-bottom: 20px;
+}
+
+.cusdash-history-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1px solid #eee;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cusdash-history-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.cusdash-history-info h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.cusdash-history-info p {
+  font-size: 0.95rem;
+  margin: 4px 0;
+  color: #555;
+}
+
+.cusdash-history-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.cusdash-history-status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.cusdash-history-status.completed {
+  background: #e6f9ed;
+  color: #28a745;
+}
+
+.cusdash-history-status.cancelled {
+  background: #fde8e8;
+  color: #e63946;
+}
+
+.cusdash-history-status.ongoing {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.cusdash-history-id small {
+  font-size: 0.8rem;
+  color: #777;
+  font-family: monospace;
+}
+
+.cusdash-empty-state {
+  text-align: center;
+  font-size: 1rem;
+  color: #777;
+  padding: 20px;
+}
+
+
 /* Section & Background */
 .subscriptions-section {
   padding: 80px 20px;
@@ -1233,6 +1325,25 @@ body {
 .subscribe-btn:hover {
   transform: scale(1.1);
   box-shadow: 0 12px 30px rgba(75,44,247,0.4);
+}
+
+.active-plan {
+  border: 2px solid #4b2cf7;
+  box-shadow: 0 15px 45px rgba(75,44,247,0.35);
+}
+
+.active-badge {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  background: #4b2cf7;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(75,44,247,0.4);
+  animation: floatBadge 2s ease-in-out infinite alternate;
 }
 
 /* Animations */

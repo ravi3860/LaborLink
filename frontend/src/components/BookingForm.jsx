@@ -36,9 +36,10 @@ const BookingForm = () => {
     phone: "",
   });
 
+  const [subscription, setSubscription] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // ✅ Fetch logged-in customer info
+  // ✅ Fetch logged-in customer info and subscription
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
@@ -62,6 +63,18 @@ const BookingForm = () => {
           phone: data.customer.phone,
           id: customerId,
         });
+
+        // Fetch subscription
+        try {
+          const subRes = await axios.get(
+            `http://localhost:2000/api/laborlink/subscriptions/${customerId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setSubscription(subRes.data);
+        } catch (err) {
+          console.warn("No active subscription:", err.response?.data?.message);
+          setSubscription(null);
+        }
       } catch (err) {
         console.error("Failed to fetch customer info:", err);
         Swal.fire("Error", "Failed to get customer info. Please log in again.", "error");
@@ -133,18 +146,25 @@ const BookingForm = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // ✅ Calculate total amount
-  useEffect(() => {
-    const rate = labor?.paymentRate || 0;
-    const hours = formData.hours || 0;
-    const days = formData.days || 0;
-    const serviceCharge = 1000;
-    const amount =
-      formData.paymentType === "Hourly"
-        ? rate * hours + serviceCharge
-        : rate * days + serviceCharge;
-    setTotalAmount(amount);
-  }, [formData.paymentType, formData.hours, formData.days, labor]);
+// ✅ Calculate total amount with subscription fee
+useEffect(() => {
+  const rate = Number(labor?.paymentRate) || 0;
+  const hours = Number(formData.hours) || 0;
+  const days = Number(formData.days) || 0;
+
+  // Use companyFee if present in subscription, otherwise fallback
+  const companyFee = subscription
+    ? (subscription.companyFee ?? (subscription.planType === "free" ? 1000 : subscription.planType === "basic" ? 500 : 0))
+    : 1000;
+
+  const amount =
+    formData.paymentType === "Hourly"
+      ? rate * hours + companyFee
+      : rate * days + companyFee;
+
+  setTotalAmount(amount);
+}, [formData.paymentType, formData.hours, formData.days, labor, subscription]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,6 +172,35 @@ const BookingForm = () => {
       const token = localStorage.getItem("token");
       if (!token) {
         Swal.fire("Not Logged In", "Please log in to book a service.", "warning");
+        return;
+      }
+
+      if (!subscription) {
+        Swal.fire(
+          "No Active Subscription",
+          "You need an active subscription to book a labor. Please subscribe first.",
+          "warning"
+        );
+        return;
+      }
+
+      // Validate booking limit
+      const { data: bookingsThisMonth } = await axios.get(
+        `http://localhost:2000/api/laborlink/bookings/customer/${customerInfo.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      const currentMonthBookings = bookingsThisMonth.filter(
+        (b) => new Date(b.createdAt) >= startOfMonth
+      );
+
+      if (currentMonthBookings.length >= subscription.bookingLimit) {
+        Swal.fire(
+          "Booking Limit Reached",
+          `You have reached your monthly booking limit (${subscription.bookingLimit}). Upgrade your subscription to book more.`,
+          "warning"
+        );
         return;
       }
 

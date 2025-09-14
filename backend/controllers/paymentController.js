@@ -13,117 +13,153 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// 📌 Create payment after labor accepts booking
+// 📌 Create payment after labor accepts booking 
 const createPayment = async (req, res) => {
-    try {
-        const { bookingId, duration, paymentMethod, cardDetails } = req.body;
+  try {
+    const { bookingId, duration, paymentMethod, cardDetails } = req.body;
 
-        const booking = await Booking.findById(bookingId).populate('laborId customerId');
-        if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    const booking = await Booking.findById(bookingId).populate('laborId customerId');
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
-        if (booking.status !== 'Accepted') {
-            return res.status(400).json({ message: 'Payment can only be made after labor accepts the booking.' });
-        }
-
-        const labor = booking.laborId;
-        const companyFee = 1000;
-        let rate = labor.paymentRate; // hourly or daily rate
-
-        // Validate duration
-        if (!duration || duration <= 0) {
-            return res.status(400).json({ message: `Please specify valid number of ${booking.paymentType.toLowerCase() === 'hourly' ? 'hours' : 'days'}.` });
-        }
-
-        const totalAmount = rate * duration + companyFee;
-
-        const payment = new Payment({
-            bookingId: booking._id,
-            customerId: booking.customerId._id,
-            laborId: labor._id,
-            paymentType: booking.paymentType,
-            rate,
-            duration,
-            companyFee,
-            totalAmount,
-            paymentMethod,
-            status: 'pending'
-        });
-
-        // ✅ Card or online payment auto-processed
-        if (paymentMethod === 'card' || paymentMethod === 'online') {
-            if (!cardDetails) {
-                return res.status(400).json({ message: 'Card details required for card/online payment.' });
-            }
-
-            // Integrate your payment gateway here (Stripe/PayPal)
-            // For now, we simulate success:
-            payment.status = 'paid';
-            booking.status = 'Ongoing';
-            await booking.save();
-        }
-
-        await payment.save();
-
-        // Send email notification
-        await transporter.sendMail({
-        from: `"LaborLink" <${process.env.EMAIL_USER}>`,
-        to: booking.customerId.email,
-        subject: payment.status === 'paid' ? '✅ Payment Successful' : '⏳ Payment Pending',
-        html: `
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
-            <tr>
-            <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
-                
-                <!-- Header -->
-                <tr>
-                    <td align="center" style="background:${payment.status === 'paid' ? '#2d6a4f' : '#ffb703'}; padding:30px;">
-                    <img src="${payment.status === 'paid' ? 'https://img.icons8.com/ios-filled/80/ffffff/money.png' : 'https://img.icons8.com/ios-filled/80/ffffff/wallet.png'}" width="60" alt="Icon" style="display:block;" />
-                    <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">
-                        ${payment.status === 'paid' ? 'Payment Successful' : 'Payment Pending'}
-                    </h2>
-                    </td>
-                </tr>
-
-                <!-- Body -->
-                <tr>
-                    <td style="padding:30px; color:#333333; font-size:15px;">
-                    <p>Hello <strong>${booking.customerId.name}</strong>,</p>
-                    <p>Your payment of <b>LKR ${payment.totalAmount}</b> for this booking has been <strong>${payment.status}</strong>.</p>
-
-                    <div style="background:#f0fff4; border-left:5px solid #2d6a4f; padding:15px; margin:20px 0; border-radius:6px;">
-                        <p style="margin:0; font-size:14px;"><b>Booking Status:</b> ${booking.status}</p>
-                        <p style="margin:0; font-size:14px;"><b>Payment Method:</b> ${payment.paymentMethod}</p>
-                    </div>
-
-                    <p>Thank you for choosing <b>LaborLink</b>.</p>
-
-                    ${payment.status !== 'paid' ? `<a href="https://your-payment-link.com" style="display:inline-block; margin:20px 0; padding:12px 24px; background:#ff6f00; color:#fff; text-decoration:none; border-radius:6px; font-weight:bold;">Pay Now</a>` : ''}
-                    </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                    <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
-                    © ${new Date().getFullYear()} LaborLink | Payment Notifications
-                    </td>
-                </tr>
-
-                </table>
-            </td>
-            </tr>
-        </table>
-        `
-        });
-
-
-        res.status(201).json({ message: 'Payment record created', payment, booking });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating payment', error: error.message });
+    if (booking.status !== 'Accepted') {
+      return res.status(400).json({ message: 'Payment can only be made after labor accepts the booking.' });
     }
+
+    const labor = booking.laborId;
+    const companyFee = 1000;
+    let rate = labor.paymentRate;
+
+    if (!duration || duration <= 0) {
+      return res.status(400).json({
+        message: `Please specify valid number of ${booking.paymentType.toLowerCase() === 'hourly' ? 'hours' : 'days'}.`
+      });
+    }
+
+    const totalAmount = rate * duration + companyFee;
+
+    const payment = new Payment({
+      bookingId: booking._id,
+      customerId: booking.customerId._id,
+      laborId: labor._id,
+      paymentType: booking.paymentType,
+      rate,
+      duration,
+      companyFee,
+      totalAmount,
+      paymentMethod,
+      status: paymentMethod === 'cash' ? 'pending' : 'pending'
+    });
+
+    // Card/online payment processing
+    if (paymentMethod === 'card' || paymentMethod === 'online') {
+      if (!cardDetails) {
+        return res.status(400).json({ message: 'Card details required for card/online payment.' });
+      }
+      payment.status = 'paid';
+      booking.status = 'Ongoing';
+    }
+
+    // Cash payment stays pending until completed
+    if (paymentMethod === 'cash') {
+      payment.status = 'pending';
+      booking.status = 'Ongoing';
+    }
+
+    await payment.save();
+    booking.payment = payment._id;
+    await booking.save();
+
+    // Email notifications
+    let subject, htmlContent;
+
+    if (paymentMethod === 'card' || paymentMethod === 'online') {
+      subject = '✅ Payment Successful';
+      htmlContent = `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+        <tr>
+          <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+              <tr>
+                <td align="center" style="background:#2d6a4f; padding:30px;">
+                  <img src="https://img.icons8.com/ios-filled/80/ffffff/money.png" width="60" alt="Paid" style="display:block;" />
+                  <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">Payment Successful</h2>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:30px; color:#333333; font-size:15px;">
+                  <p>Hello <strong>${booking.customerId.name}</strong>,</p>
+                  <p>Your payment of <b>LKR ${payment.totalAmount}</b> for this booking has been <strong>successfully received</strong>.</p>
+                  <div style="background:#f0fff4; border-left:5px solid #2d6a4f; padding:15px; margin:20px 0; border-radius:6px;">
+                    <p style="margin:0; font-size:14px;"><b>Booking Status:</b> ${booking.status}</p>
+                    <p style="margin:0; font-size:14px;"><b>Payment Method:</b> ${payment.paymentMethod}</p>
+                  </div>
+                  <p>Thank you for choosing <b>LaborLink</b>. Your labor will begin work shortly.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                  © ${new Date().getFullYear()} LaborLink | Payment Notifications
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      `;
+    } else if (paymentMethod === 'cash') {
+      subject = '⏳ Payment Pending (Cash)';
+      htmlContent = `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4; padding:30px 0;">
+        <tr>
+          <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #ddd; font-family:Arial, sans-serif;">
+              <tr>
+                <td align="center" style="background:#ffb703; padding:30px;">
+                  <img src="https://img.icons8.com/ios-filled/80/ffffff/wallet.png" width="60" alt="Cash Payment" style="display:block;" />
+                  <h2 style="color:#ffffff; margin:15px 0 0; font-size:24px;">Payment Pending</h2>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:30px; color:#333333; font-size:15px;">
+                  <p>Hello <strong>${booking.customerId.name}</strong>,</p>
+                  <p>Your booking is confirmed. Total payment: <b>LKR ${payment.totalAmount}</b>.</p>
+                  <p>Please pay in cash directly to the labor after work completion.</p>
+                  <div style="background:#fff9e6; border-left:5px solid #ffb703; padding:15px; margin:20px 0; border-radius:6px;">
+                    <p style="margin:0; font-size:14px;"><b>Booking Status:</b> ${booking.status}</p>
+                    <p style="margin:0; font-size:14px;"><b>Payment Method:</b> ${payment.paymentMethod}</p>
+                  </div>
+                  <p>Thank you for choosing <b>LaborLink</b>.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#fafafa; padding:15px; text-align:center; font-size:12px; color:#777;">
+                  © ${new Date().getFullYear()} LaborLink | Payment Notifications
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      `;
+    }
+
+    await transporter.sendMail({
+      from: `"LaborLink" <${process.env.EMAIL_USER}>`,
+      to: booking.customerId.email,
+      subject,
+      html: htmlContent
+    });
+
+    res.status(201).json({ 
+      message: 'Payment record created', 
+      payment, 
+      booking: await Booking.findById(booking._id).populate('laborId customerId payment') 
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating payment', error: error.message });
+  }
 };
-
-
 
 // 📌 Mark payment as paid
 const markPaymentPaid = async (req, res) => {
@@ -204,7 +240,8 @@ const markPaymentPaid = async (req, res) => {
         });
 
 
-        res.status(200).json({ message: 'Payment marked as paid', payment, booking });
+        res.status(200).json({ message: 'Payment marked as paid', payment, booking: await Booking.findById(booking._id)
+    .populate('laborId customerId payment') });
     } catch (error) {
         res.status(500).json({ message: 'Error marking payment', error: error.message });
     }

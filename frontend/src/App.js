@@ -14,6 +14,7 @@ import CustomerDashboard from './components/Dashboards/CustomerDashboard';
 import LaborDashboard from './components/Dashboards/LaborDashboard';
 import AdminDashboard from './components/Dashboards/AdminDashboard';
 import BookingForm from "./components/BookingForm";
+import PaymentForm from "./components/PaymentForm"; 
 
 const ProtectedRoute = ({ children, role }) => {
   const { auth } = useAuth();
@@ -76,6 +77,17 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* ✅ Payment Form Route */}
+          <Route
+            path="/payments/booking/:id"
+            element={
+              <ProtectedRoute role="Customer">
+                <PaymentForm />
+              </ProtectedRoute>
+            }
+          />
+          
         </Routes>
       </Router>
     </AuthProvider>
