@@ -16,10 +16,7 @@ const {
 
 const { loginUser } = require('../controllers/loginController');
 
-const {
-  addReview,
-  getReviewsForLabor
-} = require('../controllers/reviewController');
+const { addReview, getReviewsForLabor } = require("../controllers/reviewController");
 
 const {
   verifyCode,
