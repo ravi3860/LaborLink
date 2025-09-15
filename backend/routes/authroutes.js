@@ -17,6 +17,11 @@ const {
 const { loginUser } = require('../controllers/loginController');
 
 const {
+  addReview,
+  getReviewsForLabor
+} = require('../controllers/reviewController');
+
+const {
   verifyCode,
   toggleTwoStepVerification // import the new method
 } = require('../controllers/verificationController');
