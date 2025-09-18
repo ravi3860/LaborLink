@@ -16,7 +16,21 @@ const {
 
 const { loginUser } = require('../controllers/loginController');
 
-const { addReview, getReviewsForLabor } = require("../controllers/reviewController");
+const {
+  addReview,
+  getReviewsForLabor
+} = require('../controllers/reviewController');
+
+const {
+  addNotification,
+  createNotification,
+  getNotifications,
+  markAsRead,
+  deleteNotification,
+  clearAllNotifications,
+  markAllAsRead
+} = require('../controllers/notificationController');
+
 
 const {
   verifyCode,
@@ -221,6 +235,54 @@ router.get('/labors',
   '/admin/bookings/:id/status',
   authMiddleware.verifyAdmin,
   updateBookingStatusAsAdmin
+);
+
+router.post(
+  '/reviews', 
+  authMiddleware.verifyCustomer, 
+  addReview
+);
+
+
+router.get(
+  '/reviews/:laborId', 
+  authMiddleware.verifyCustomer, 
+  getReviewsForLabor
+);
+
+//Tempory
+router.post('/notifications', authMiddleware.verifyCustomer, createNotification);
+
+// Notification routes
+router.get(
+  '/notifications', 
+  authMiddleware.verifyCustomer, // or verifyLabor/admin depending on role
+  getNotifications
+);
+
+router.patch(
+  '/notifications/:notificationId/read',
+  authMiddleware.verifyCustomer,
+  markAsRead
+);
+
+router.delete(
+  '/notifications/:notificationId',
+  authMiddleware.verifyCustomer,
+  deleteNotification
+);
+
+router.delete(
+  '/notifications',
+  authMiddleware.verifyCustomer,
+  clearAllNotifications
+);
+
+// routes/authRoutes.js
+router.patch(
+  '/notifications/mark-all-read',
+  authMiddleware.verifyCustomer,
+  markAllAsRead
 );
 
 module.exports = router;

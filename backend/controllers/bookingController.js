@@ -2,6 +2,7 @@ const Booking = require('../models/Booking');
 const Labor = require('../models/Labor');
 const Subscription = require('../models/Subscription');
 const nodemailer = require('nodemailer');
+const { addNotification } = require('../controllers/notificationController');
 
 // Setup NodeMailer transporter
 const transporter = nodemailer.createTransport({
@@ -84,6 +85,11 @@ const createBooking = async (req, res) => {
         });
 
         await booking.save();
+        await addNotification(
+          customerId,
+          'Customer',
+          `Your booking with ${labor.name} is created and is now pending approval.`
+        );
         res.status(201).json({ message: 'Booking created successfully', booking, totalAmount });
     } catch (error) {
         res.status(500).json({ message: 'Error creating booking', error: error.message });
@@ -151,6 +157,14 @@ const updateBookingStatus = async (req, res) => {
 
             booking.status = 'Completed';
             await booking.save();
+            const reviewLink = `/customer/review/${booking.customerId._id || booking.customerId}/${booking.laborId._id || booking.laborId}/${booking._id}`;
+            await addNotification(
+              booking.customerId,
+              'Customer',
+              `Your booking with ${booking.laborId.name} has been completed. Please leave a review.`,
+              'info',
+              reviewLink
+            );
             return res.status(200).json({ message: 'Booking completed', booking });
         }
 
@@ -159,6 +173,11 @@ const updateBookingStatus = async (req, res) => {
             booking.status = 'Cancelled';
             booking.declineReason = declineReason || 'No reason provided';
             await booking.save();
+            await addNotification(
+            booking.customerId,
+            'Customer',
+            `Unfortunately, your booking with ${booking.laborId.name} has been cancelled.`
+            );
 
             // Send email to customer
             const mailOptions = {
@@ -219,6 +238,11 @@ const updateBookingStatus = async (req, res) => {
         if (normalizedStatus === 'accepted') {
             booking.status = 'Accepted';
             await booking.save();
+            await addNotification(
+              booking.customerId,
+              'Customer',
+              `Your booking with ${booking.laborId.name} has been accepted. Please proceed to payment.`
+            );
             return res.status(200).json({ message: 'Booking accepted by labor', booking });
         }
 
@@ -226,6 +250,11 @@ const updateBookingStatus = async (req, res) => {
         if (normalizedStatus === 'ongoing') {
             booking.status = 'Ongoing';
             await booking.save();
+            await addNotification(
+              booking.customerId,
+              'Customer',
+              `Your booking with ${booking.laborId.name} is now ongoing.`
+            );
             return res.status(200).json({ message: 'Booking is now ongoing', booking });
         }
         

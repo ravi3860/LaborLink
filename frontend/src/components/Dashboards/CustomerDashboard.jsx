@@ -18,7 +18,7 @@ import {
   FaLock,
   FaHistory,
   FaHardHat,
-  FaBolt, FaWater, FaPaintBrush, FaCheckCircle, FaHammer, FaTools, FaFire 
+  FaBolt, FaWater, FaPaintBrush, FaCheckCircle, FaHammer, FaTools, FaFire, FaBell 
 } from 'react-icons/fa';
 import { format } from "date-fns";
 import axios from 'axios';
@@ -35,6 +35,9 @@ const CustomerDashboard = () => {
   const [profileTab, setProfileTab] = useState('overview');
   const [twoStepEnabled, setTwoStepEnabled] = useState(false);
   const [loadingTwoStep, setLoadingTwoStep] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
   const navigate = useNavigate();
 
   const [bookingTab, setBookingTab] = useState('create');
@@ -124,6 +127,83 @@ const CustomerDashboard = () => {
 
   if (activeTab === "bookings" && bookingTab === "status") fetchBookings();
 }, [activeTab, bookingTab, customerData?._id]);
+
+useEffect(() => {
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get('http://localhost:2000/api/laborlink/notifications', 
+        { headers: { Authorization: `Bearer ${token}` } });
+
+      const notifications = Array.isArray(res.data)
+        ? res.data
+        : res.data.notifications || [];
+
+      // Sort by newest first
+      notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      setNotifications(notifications);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  };
+
+  fetchNotifications();
+
+  // Optional: Polling every 60s
+  const interval = setInterval(fetchNotifications, 60000);
+  return () => clearInterval(interval);
+}, []);
+
+// Mark notification as read
+const markAsRead = async (notificationId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:2000/api/laborlink/notifications/${notificationId}/read`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update local state
+    setNotifications(prev =>
+      prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
+    );
+  } catch (err) {
+    console.error("Failed to mark notification as read:", err);
+  }
+};
+
+const markAllAsRead = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.patch(
+      `http://localhost:2000/api/laborlink/notifications/mark-all-read`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update local state
+    setNotifications(prev =>
+      prev.map(n => ({ ...n, read: true }))
+    );
+  } catch (err) {
+    console.error("Failed to mark all as read:", err);
+  }
+};
+
+const clearAllNotifications = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(
+      `http://localhost:2000/api/laborlink/notifications`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setNotifications([]);
+  } catch (err) {
+    console.error("Failed to clear notifications:", err);
+  }
+};
 
 
   const handleLogout = () => {
@@ -274,6 +354,80 @@ const handleSubscribe = async (planType) => {
             <p className="cusdash-subtitle">Here’s what’s happening on your account today.</p>
           </div>
           <div className="cusdash-date">{today}</div>
+
+          {/* ------------------ Notification Button ------------------ */}
+          <div className="cusdash-notification-container">
+            <button
+              className="cusdash-notification-btn"
+              onClick={() => setShowDropdown(!showDropdown)}
+              aria-label="Notifications"
+            >
+              <FaBell />
+              {notifications.filter(n => !n.read).length > 0 && (
+                <span className="cusdash-notification-badge">
+                  {notifications.filter(n => !n.read).length}
+                </span>
+              )}
+            </button>
+
+              {showDropdown && (
+              <div className="cusdash-notification-dropdown">
+                {notifications.length > 0 && (
+                  <div className="cusdash-notification-actions">
+                    <button
+                      className="cusdash-btn cusdash-btn-primary"
+                      onClick={markAllAsRead}
+                    >
+                      Mark all as read
+                    </button>
+
+                    <button
+                      className="cusdash-btn cusdash-btn-danger"
+                      onClick={clearAllNotifications}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+
+                {notifications.length === 0 ? (
+                  <p className="cusdash-notification-empty">No notifications</p>
+                ) : (
+                  notifications.map((note) => (
+                    <div
+                      key={note._id}
+                      className={`cusdash-notification-item ${note.read ? '' : 'unread'} `}
+                    onClick={async () => {
+                      setSelectedNotification(note);
+                      try {
+                        await markAsRead(note._id);
+                      } catch (err) {
+                        console.error("Failed to mark notification as read:", err.response || err);
+                      }
+
+                      if (note.type === "review") {
+                        navigate("/customer/review", {
+                          state: {
+                            customerId: customerData._id,
+                            laborId: note.laborId,
+                            bookingId: note.bookingId,
+                          },
+                        });
+                      } else if (note.link) {
+                        navigate(note.link);
+                      }
+                    }}
+                    >
+                      <p className="cusdash-notification-text">{note.message}</p>
+                      <small className="cusdash-notification-time">
+                        {new Date(note.createdAt).toLocaleString()}
+                      </small>
+                    </div>
+                ))
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Quick Stats */}
